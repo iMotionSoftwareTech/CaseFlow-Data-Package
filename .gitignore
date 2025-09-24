@@ -16,3 +16,34 @@ bin-release/
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/CopilotIndices/17.14.786.1071/CodeChunks.db
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/CopilotIndices/17.14.786.1071/SemanticSymbols.db
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/DesignTimeBuild/.dtbcache.v2
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/FileContentIndex/1c4f8441-0100-4e6b-8777-868222ed7d02.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/FileContentIndex/880c371b-c3fc-44d8-9cb7-e89aaa059a55.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/FileContentIndex/af329999-0f7d-4796-9618-bbe0847e4309.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/FileContentIndex/d9f62a9e-79b1-447d-93e8-3cc3df8c5b2b.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow-Data-Package/FileContentIndex/e8999d35-5fc5-409a-9e50-ad52435bd2ec.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/DesignTimeBuild/.dtbcache.v2
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/FileContentIndex/0f4a6949-c70f-42ba-a086-0f05bcbd57dc.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/FileContentIndex/2d45fe99-be5a-42fc-a1b6-a7c4e812b367.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/FileContentIndex/3e5e4513-b105-44f7-b4aa-48c59b1e4a92.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/FileContentIndex/8aa38f77-8567-4544-8f8c-267617c5bd08.vsidx
+/CaseFlowDataPackage/.vs/CaseFlow.DAL/FileContentIndex/a2f31298-4191-47bc-9b0c-6bb95594c78c.vsidx
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/DesignTimeBuild/.dtbcache.v2
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/FileContentIndex/36d616df-ad54-4f68-acdd-a244b716c4df.vsidx
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/FileContentIndex/44c0fc96-3025-4f45-a524-ea344c3d024e.vsidx
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/v17
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/v17/.futdcache.v2
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/v17/.suo
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/v17/DocumentLayout.backup.json
+/CaseFlowDataPackage/.vs/CaseFlowDataPackage/v17/DocumentLayout.json
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow-data-package.metadata.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow-data-package.projects.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow-data-package.strings.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow.dal.metadata.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow.dal.projects.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflow.dal.strings.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflowdatapackage.metadata.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflowdatapackage.projects.v9.bin
+/CaseFlowDataPackage/.vs/ProjectEvaluation/caseflowdatapackage.strings.v9.bin
