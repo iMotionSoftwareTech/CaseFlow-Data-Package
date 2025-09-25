@@ -16,11 +16,23 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
     <Authors>IMotionSoftware</Authors>
     <AssemblyName>$(Authors).$(MSBuildProjectName)</AssemblyName>
+    <UserSecretsId>2525d775-4b6b-4538-b3ec-3e559d37c5ac</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.9" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.6" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.4.3" />
@@ -29,11 +41,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <ProjectReference Include="..\CaseFlowDataPackage\CaseFlowDataPackage.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
 </Project>

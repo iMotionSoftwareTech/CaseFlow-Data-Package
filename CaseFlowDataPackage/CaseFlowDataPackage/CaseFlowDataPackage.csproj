@@ -28,13 +28,8 @@ Asynchronous Operations: All public methods are asynchronous (e.g., CreateUserAs
     <PackageProjectUrl>https://github.com/iMotionSoftwareTech/CaseFlow-Data-Package</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <UserSecretsId>3bf4c2e4-8369-4f75-ae46-2abd621012b8</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="DomainObjects\ParameterObjects\" />
-    <Folder Include="Infrastructure\StoredProcedures\" />
-    <Folder Include="Infrastructure\ParameterBuilders\" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\IMotionSoftwareLogo.png">
@@ -50,6 +45,8 @@ Asynchronous Operations: All public methods are asynchronous (e.g., CreateUserAs
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
   </ItemGroup>
 
 </Project>
