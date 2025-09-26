@@ -5,11 +5,7 @@ using IMotionSoftware.CaseFlowDataPackage.Interfaces;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 {
-    /// <summary>
-    /// The RoleRepo
-    /// </summary>
-    /// <seealso cref="IMotionSoftware.CaseFlowDataPackage.Interfaces.IRoleRepo" />
-    public class RoleRepo : IRoleRepo
+    public class TaskRepo : ITaskRepo
     {
         /// <summary>
         /// The connection factory
@@ -21,31 +17,26 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         private readonly ISqlRunner _sqlRunner;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RoleRepo"/> class.
-        /// </summary>
-        /// <param name="userRepo">The user repo.</param>
-        /// <param name="connFactory">The connection factory.</param>
-        public RoleRepo(IDbConnectionFactory connFactory, ISqlRunner sqlRunner)
+        public TaskRepo(IDbConnectionFactory connFactory, ISqlRunner sqlRunner)
         {
             _connFactory = connFactory;
             _sqlRunner = sqlRunner;
         }
 
         /// <summary>
-        /// Creates the role asynchronous.
+        /// Creates the task asynchronous.
         /// </summary>
-        /// <param name="createRoleParameter">The create role parameter.</param>
+        /// <param name="createTaskParameter">The create task parameter.</param>
         /// <returns>
         /// The <see cref="Task{int}" />
         /// </returns>
-        public async Task<int> CreateRoleAsync(CreateRoleParameter createRoleParameter)
+        public async Task<int> CreateTaskAsync(CreateTaskParameter createTaskParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            var parameters = createRoleParameter.CreateRoleDynamicParameters();
-            return await _sqlRunner.ExecuteAsync(conn, RoleStoredProcedures.CreateRoleSP, parameters);
+            var parameters = createTaskParameter.CreateTaskDynamicParameters();
+            return await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.CreateTaskSP, parameters);
         }
     }
 }
