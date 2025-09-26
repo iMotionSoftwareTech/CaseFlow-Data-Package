@@ -85,8 +85,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
               .ReturnsAsync(-1);
 
+            // Act
             var result = await _repo.CreateRoleAsync(createRoleParam);
 
+            // Assert
             Assert.AreEqual(-1, result);
             _sql.Verify(s =>
                 s.ExecuteAsync(
@@ -96,6 +98,9 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                 Times.Once);
         }
 
+        /// <summary>
+        /// Creates the role throws exception test.
+        /// </summary>
         [TestMethod, TestCategory("UnitTest")]
         public async Task CreateRole_ThrowsException_Test()
         {
@@ -108,8 +113,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
               .ThrowsAsync(new Exception(MockData.RoleException));
 
+            // Act
             var ex = await Assert.ThrowsExceptionAsync<Exception>(() => _repo.CreateRoleAsync(createRoleParam));
 
+            // Assert
             Assert.AreEqual(MockData.RoleException, ex.Message);
 
             _sql.Verify(s =>

@@ -1,13 +1,13 @@
 ﻿namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures
 {
     /// <summary>
-    /// The RoleStoredProcedures
+    /// The TaskStoredProcedures
     /// </summary>
-    public static class RoleStoredProcedures
+    public static class TaskStoredProcedures
     {
         /// <summary>
-        /// The create role sp
+        /// The create task sp
         /// </summary>
-        public static string CreateRoleSP = "caseFlow.CreateRole";
+        public static string CreateTaskSP = "caseFlow.CreateTask";
     }
 }

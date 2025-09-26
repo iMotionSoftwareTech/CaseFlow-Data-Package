@@ -11,11 +11,12 @@ using System.Data;
 namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 {
     /// <summary>
-    /// 
+    /// The TaskRepoIntegrationTests
     /// </summary>
     [TestClass]
-    public class RoleRepoIntegrationTests
+    public class TaskRepoIntegrationTests
     {
+
         /// <summary>
         /// The factory
         /// </summary>
@@ -35,7 +36,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// Classes the initialize.
         /// </summary>
         /// <param name="_">The .</param>
-        /// <exception cref="System.InvalidOperationException">Connection string not found</exception>
+        /// <exception cref="InvalidOperationException">Connection string not found</exception>
         [ClassInitialize]
         public static void ClassInit(TestContext _)
         {
@@ -43,7 +44,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true)
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development"}.json", optional: true)
-                .AddUserSecrets<RoleRepoIntegrationTests>(optional: true)
+                .AddUserSecrets<TaskRepoIntegrationTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
@@ -55,7 +56,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// </summary>
         [TestInitialize]
         public void Setup()
-        {    
+        {
             _factory = new InlineFactory(connString);
             _sql = new DapperSqlRunner();
         }
@@ -73,48 +74,50 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// Creates the role asynchronous writes role returns1.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
-        public async Task CreateRoleAsync_WritesRole_Returns1()
+        public async Task CreateTaskAsync_WritesTask_Returns1()
         {
             using var conn = new SqlConnection(connString);
             await conn.OpenAsync();
 
-            var repo = new RoleRepo(_factory, _sql);
-            await repo.CreateRoleAsync(MockData.GetCreateRoleParameters().First());
+            var repo = new TaskRepo(_factory, _sql);
+            await repo.CreateTaskAsync(MockData.GetCreateTaskParameters().First());
 
-            var inserted = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole);
-            Assert.AreEqual(MockData.RoleName, inserted.Name);
+            var inserted = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+            Assert.AreEqual(MockData.TaskTitle, inserted.Title);
 
             // cleanup (when not using TransactionScope)
-            await conn.ExecuteAsync(TestQueries.DeleteRole);
+            await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
+            await conn.ExecuteAsync(TestQueries.DeleteTask);
         }
 
         /// <summary>
         /// Creates the role asynchronous when duplicate name throws or fails gracefully.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
-        public async Task CreateRoleAsync_WhenDuplicateName_ThrowsOrFailsGracefully()
+        public async Task CreateTaskAsync_WhenDuplicateTask_ThrowsOrFailsGracefully()
         {
-            var param = MockData.GetCreateRoleParameters().ElementAt(1);
-            var repo = new RoleRepo(_factory, _sql);
+            var param = MockData.GetCreateTaskParameters().ElementAt(1);
+            var repo = new TaskRepo(_factory, _sql);
 
             // Seed first insert
-            await repo.CreateRoleAsync(param);
+            await repo.CreateTaskAsync(param);
 
             try
             {
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateRoleAsync(param));                
+                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateTaskAsync(param));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                StringAssert.Contains(e.Message, MockData.RoleException);
+                StringAssert.Contains(e.Message, MockData.TaskException);
             }
             finally
             {
                 await using var conn = new SqlConnection(connString);
                 await conn.OpenAsync();
-                await conn.ExecuteAsync(TestQueries.DeleteRole);
+                await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
+                await conn.ExecuteAsync(TestQueries.DeleteTask);
             }
         }
 
@@ -122,7 +125,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// <summary>
         /// The InlineFactory
         /// </summary>
-        /// <seealso cref="IMotionSoftware.CaseFlowDataPackage.Interfaces.IDbConnectionFactory" />
+        /// <seealso cref="IDbConnectionFactory" />
         private sealed class InlineFactory : IDbConnectionFactory
         {
             private readonly string _cs;
