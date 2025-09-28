@@ -15,7 +15,6 @@
         /// </summary>
         public static string DeleteRole = "DELETE FROM caseFlow.CaseworkerRole WHERE Name = 'Test Role'";
 
-
         /// <summary>
         /// The get task
         /// </summary>
@@ -30,5 +29,20 @@
         /// The delete task
         /// </summary>
         public static string DeleteTask = "DELETE FROM caseFlow.Task";
+
+        /// <summary>
+        /// The get task
+        /// </summary>
+        public static string GetUser = "SELECT TOP 1 * FROM caseFlow.[User] WHERE Username = 'JSmith'";
+
+        /// <summary>
+        /// The delete task status
+        /// </summary>
+        public static string DeleteCaseworker = "DELETE FROM caseFlow.Caseworker WHERE Id > 0";
+
+        /// <summary>
+        /// The delete task
+        /// </summary>
+        public static string DeleteUser = "DELETE FROM caseFlow.[User] WHERE Id > 0";
     }
 }

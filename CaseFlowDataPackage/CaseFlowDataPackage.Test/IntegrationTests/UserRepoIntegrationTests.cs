@@ -11,10 +11,10 @@ using System.Data;
 namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 {
     /// <summary>
-    /// The TaskRepoIntegrationTests
+    /// The UserRepoIntegrationTests
     /// </summary>
     [TestClass]
-    public class TaskRepoIntegrationTests
+    public class UserRepoIntegrationTests
     {
         /// <summary>
         /// The factory
@@ -49,7 +49,6 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 
             connString = config.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string not found");
         }
-
         /// <summary>
         /// Setups this instance.
         /// </summary>
@@ -70,42 +69,42 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         }
 
         /// <summary>
-        /// Creates the task asynchronous writes task returns1.
+        /// Creates the user asynchronous creates user returns success.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
-        public async Task CreateTaskAsync_WritesTask_Returns1()
+        public async Task CreateUserAsync_CreatesUser_ReturnsSuccess()
         {
             using var conn = new SqlConnection(connString);
             await conn.OpenAsync();
 
-            var repo = new TaskRepo(_factory, _sql);
-            await repo.CreateTaskAsync(MockData.GetCreateTaskParameters().First());
+            var repo = new UserRepo(_factory, _sql);
+            await repo.CreateUserAsync(MockData.GetCreateUserParameters().First());
 
-            var inserted = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
-            Assert.AreEqual(MockData.TaskTitle, inserted.Title);
+            var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUser);
+            Assert.AreEqual(MockData.Username, inserted.UserName);
 
             // cleanup (when not using TransactionScope)
-            await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
-            await conn.ExecuteAsync(TestQueries.DeleteTask);
+            await conn.ExecuteAsync(TestQueries.DeleteUser);
+            await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
         }
 
         /// <summary>
-        /// Creates the task asynchronous when duplicate task throws or fails gracefully.
+        /// Creates the user asynchronous when duplicate task throws or fails gracefully.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
-        public async Task CreateTaskAsync_WhenDuplicateTask_ThrowsOrFailsGracefully()
+        public async Task CreateUserAsync_WhenDuplicateTask_ThrowsOrFailsGracefully()
         {
-            var param = MockData.GetCreateTaskParameters().ElementAt(1);
-            var repo = new TaskRepo(_factory, _sql);
+            var param = MockData.GetCreateUserParameters().ElementAt(1);
+            var repo = new UserRepo(_factory, _sql);
 
             // Seed first insert
-            await repo.CreateTaskAsync(param);
+            await repo.CreateUserAsync(param);
 
             try
             {
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateTaskAsync(param));
+                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateUserAsync(param));
             }
             catch (Exception e)
             {
@@ -115,8 +114,8 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             {
                 await using var conn = new SqlConnection(connString);
                 await conn.OpenAsync();
-                await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
-                await conn.ExecuteAsync(TestQueries.DeleteTask);
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
             }
         }
 
