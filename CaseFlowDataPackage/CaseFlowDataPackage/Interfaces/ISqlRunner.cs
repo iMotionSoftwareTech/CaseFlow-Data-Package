@@ -47,5 +47,32 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <returns>The <see cref="Task{T}"</returns>
         Task<T?> QuerySingleOrDefaultAsync<T>(IDbConnection connection, string sql, object? param = null,
                                 IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null);
+
+        /// <summary>
+        /// Queries the multiple asynchronous.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <returns>The <see cref="Task{T}"</returns>
+        Task<IMultiReader> QueryMultipleAsync(IDbConnection connection, string sql, object? param = null,
+                                IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null);
+
+        /// <summary>
+        /// Queries the asynchronous.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">The connection.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <returns>THe <see cref="Task{T}"/></returns>
+        Task<IEnumerable<T>> QueryAsync<T>(IDbConnection connection, string sql, object? param = null,
+                                IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null);
     }
 }

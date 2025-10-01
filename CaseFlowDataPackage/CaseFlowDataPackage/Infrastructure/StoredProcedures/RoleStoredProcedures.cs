@@ -9,5 +9,10 @@
         /// The create role sp
         /// </summary>
         public static string CreateRoleSP = "caseFlow.CreateRole";
+
+        /// <summary>
+        /// The get all roles sp
+        /// </summary>
+        public static string GetAllRolesSP = "caseFlow.GetAllRoles";
     }
 }

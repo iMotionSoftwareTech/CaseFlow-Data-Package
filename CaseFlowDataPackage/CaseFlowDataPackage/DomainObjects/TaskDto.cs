@@ -30,6 +30,14 @@
         public string? Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        /// <value>
+        /// The status.
+        /// </value>
+        public string? Status { get; set; }
+
+        /// <summary>
         /// Gets or sets the due date.
         /// </summary>
         /// <value>

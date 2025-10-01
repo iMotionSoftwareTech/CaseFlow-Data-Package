@@ -9,5 +9,10 @@
         /// The create user sp
         /// </summary>
         public static string CreateUserSP = "caseFlow.CreateUser";
+
+        /// <summary>
+        /// The get user sp
+        /// </summary>
+        public static string GetUserSP = "caseFlow.GetUser";
     }
 }

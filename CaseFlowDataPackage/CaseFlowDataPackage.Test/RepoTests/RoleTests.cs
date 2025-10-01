@@ -1,5 +1,6 @@
 ﻿using CaseFlowDataPackage.Test.Helpers;
 using Dapper;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
@@ -125,6 +126,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                     RoleStoredProcedures.CreateRoleSP,
                     It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
+        }
+
+        [TestMethod, TestCategory("UnitTest")]
+        public async Task GetAllRoles_ReturnsCaseworkerRolesTest()
+        {
+            // Arrange
+            _sql.Setup(s => s.QueryAsync<CaseworkerRoleDto>(_conn.Object,
+                  RoleStoredProcedures.GetAllRolesSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetCaseworkerRoles());
+
+            // Act
+            var result = await _repo.GetAllRolesAsync();
+
+            // Assert
+            Assert.IsNotNull(result);
+            _sql.Verify(s => s.QueryAsync<CaseworkerRoleDto>(_conn.Object,
+                  RoleStoredProcedures.GetAllRolesSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
         }
     }
 }

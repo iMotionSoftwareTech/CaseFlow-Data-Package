@@ -1,4 +1,5 @@
-﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
+﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
@@ -46,6 +47,18 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 
             var parameters = createRoleParameter.CreateRoleDynamicParameters();
             return await _sqlRunner.ExecuteAsync(conn, RoleStoredProcedures.CreateRoleSP, parameters);
+        }
+
+        /// <summary>
+        /// Gets all roles.
+        /// </summary>
+        /// <returns>The <see cref="Task{T}"/></returns>
+        public async Task<IEnumerable<CaseworkerRoleDto>> GetAllRolesAsync() 
+        {
+            using var conn = _connFactory.Create();
+            conn.Open();
+
+            return await _sqlRunner.QueryAsync<CaseworkerRoleDto>(conn, RoleStoredProcedures.GetAllRolesSP);
         }
     }
 }

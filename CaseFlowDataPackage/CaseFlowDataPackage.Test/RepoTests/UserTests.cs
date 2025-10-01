@@ -1,4 +1,5 @@
 ﻿using CaseFlowDataPackage.Test.Helpers;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
 using IMotionSoftware.CaseFlowDataPackage.Repositories;
@@ -72,7 +73,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         public async Task CreateUser_ReturnsSuccessCount_Test()
         {
             // Arrange
-            var createUserParam = MockData.GetCreateUserParameters().First();
+            var createUserParam = MockData.GetCreateUserParameters(1).First();
             _sql
               .Setup(s => s.ExecuteAsync(
                   _conn.Object,
@@ -100,7 +101,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         public async Task CreateUser_ThrowsException_Test()
         {
             // Arrange
-            var createUserParam = MockData.GetCreateUserParameters().ElementAt(1);
+            var createUserParam = MockData.GetCreateUserParameters(1).ElementAt(1);
             _sql
               .Setup(s => s.ExecuteAsync(
                    _conn.Object,
@@ -120,6 +121,26 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                   UserStoredProcedures.CreateUserSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
+        }
+
+        /// <summary>
+        /// Gets the user returns user test.
+        /// </summary>
+        public async Task GetUser_ReturnsUser_Test()
+        {
+            // Arrange
+            _sql.Setup(s => s.QuerySingleAsync<UserDetailDto>(_conn.Object,
+                  UserStoredProcedures.GetUserSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetUsersDetail());
+
+            // Act
+            var result = await _repo.GetUserAsync("john.smith@example.com");
+
+            // Assert
+            Assert.IsNotNull(result);
+            _sql.Verify(s => s.QuerySingleAsync<UserDetailDto>(_conn.Object,
+                  UserStoredProcedures.GetUserSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
         }
     }
 }
