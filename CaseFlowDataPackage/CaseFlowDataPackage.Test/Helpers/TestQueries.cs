@@ -8,17 +8,17 @@
         /// <summary>
         /// The get role
         /// </summary>
-        public static string GetRole = "SELECT TOP 1 * FROM caseFlow.CaseworkerRole WHERE Name = 'Test Role'";
+        public static string GetRole = "SELECT TOP 1 * FROM caseFlow.CaseworkerRole WHERE [Name] = @name";
 
         /// <summary>
         /// The delete role
         /// </summary>
-        public static string DeleteRole = "DELETE FROM caseFlow.CaseworkerRole WHERE Name = 'Test Role'";
+        public static string DeleteRole = "DELETE FROM caseFlow.CaseworkerRole WHERE [Name] LIKE '%Test Role%'";
 
         /// <summary>
         /// The get task
         /// </summary>
-        public static string GetTask = "SELECT TOP 1 * FROM caseFlow.Task WHERE Title = 'Theft'";
+        public static string GetTask = "SELECT TOP 1 * FROM caseFlow.Task Order BY Id DESC";
 
         /// <summary>
         /// The delete task status
@@ -38,11 +38,16 @@
         /// <summary>
         /// The delete task status
         /// </summary>
-        public static string DeleteCaseworker = "DELETE FROM caseFlow.Caseworker WHERE Id > 0";
+        public static string DeleteCaseworker = "DELETE FROM caseFlow.Caseworker";
 
         /// <summary>
         /// The delete task
         /// </summary>
-        public static string DeleteUser = "DELETE FROM caseFlow.[User] WHERE Id > 0";
+        public static string DeleteUser = "DELETE FROM caseFlow.[User]";
+
+        /// <summary>
+        /// The get caseworker
+        /// </summary>
+        public static string GetCaseworker = "SELECT TOP 1 * FROM caseFlow.Caseworker ORDER BY ID DESC";
     }
 }

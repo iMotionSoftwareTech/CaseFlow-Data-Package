@@ -1,4 +1,5 @@
-﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
+﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
@@ -37,6 +38,22 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 
             var parameters = createUserParameter.CreateUserDynamicParameters();
             return await _sqlRunner.ExecuteAsync(conn, UserStoredProcedures.CreateUserSP, parameters);
+        }
+
+        /// <summary>
+        /// Gets the user asynchronous.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns>
+        /// The <see cref="Task{T}" />
+        /// </returns>
+        public async Task<UserDetailDto> GetUserAsync(string email)
+        {
+            using var conn = _connFactory.Create();
+            conn.Open();
+
+            var parameters = email.GetUserDynamicParameters();
+            return await _sqlRunner.QuerySingleAsync<UserDetailDto>(conn, UserStoredProcedures.GetUserSP, parameters);
         }
     }
 }

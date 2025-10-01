@@ -11,7 +11,7 @@ using System.Data;
 namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 {
     /// <summary>
-    /// 
+    /// The RoleRepoIntegrationTests
     /// </summary>
     [TestClass]
     public class RoleRepoIntegrationTests
@@ -77,15 +77,19 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         {
             using var conn = new SqlConnection(connString);
             await conn.OpenAsync();
+            try
+            {
+                var param = MockData.GetCreateRoleParameters().First();
+                var repo = new RoleRepo(_factory, _sql);
+                await repo.CreateRoleAsync(param);
 
-            var repo = new RoleRepo(_factory, _sql);
-            await repo.CreateRoleAsync(MockData.GetCreateRoleParameters().First());
-
-            var inserted = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole);
-            Assert.AreEqual(MockData.RoleName, inserted.Name);
-
-            // cleanup (when not using TransactionScope)
-            await conn.ExecuteAsync(TestQueries.DeleteRole);
+                var inserted = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = param.RoleName });
+                Assert.AreEqual(MockData.RoleName, inserted.Name);
+            }
+            finally { 
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
         }
 
         /// <summary>
@@ -114,6 +118,31 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             {
                 await using var conn = new SqlConnection(connString);
                 await conn.OpenAsync();
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+        }
+
+        /// <summary>
+        /// Gets all roles asynchronous returns roles from database.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task GetAllRolesAsync_ReturnsRoles_FromDb()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+
+            try
+            {
+                var repo = new RoleRepo(_factory, _sql);
+                await repo.CreateRoleAsync(MockData.GetCreateRoleParameters().ElementAt(2));
+
+                var result = await repo.GetAllRolesAsync();
+
+                Assert.IsNotNull(result);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
                 await conn.ExecuteAsync(TestQueries.DeleteRole);
             }
         }

@@ -27,5 +27,18 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
 
             return parameters;
         }
+
+        /// <summary>
+        /// Gets the user dynamic parameters.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns>The <see cref="DynamicParameters"/></returns>
+        public static DynamicParameters GetUserDynamicParameters(this string email)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("email", email, DbType.String, ParameterDirection.Input);
+
+            return parameters;
+        }
     }
 }

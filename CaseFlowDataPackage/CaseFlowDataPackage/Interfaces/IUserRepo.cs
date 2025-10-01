@@ -1,4 +1,5 @@
-﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
+﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
 {
@@ -13,5 +14,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <param name="createUserParameter">The create user parameter.</param>
         /// <returns>The <see cref="Task{int}"/></returns>
         Task<int> CreateUserAsync(CreateUserParameter createUserParameter);
+
+        /// <summary>
+        /// Gets the user asynchronous.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns>The <see cref="Task{T}"/></returns>
+        Task<UserDetailDto> GetUserAsync(string email);
     }
 }

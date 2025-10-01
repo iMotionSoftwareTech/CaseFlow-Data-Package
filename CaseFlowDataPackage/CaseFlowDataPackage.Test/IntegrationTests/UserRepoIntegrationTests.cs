@@ -76,16 +76,27 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         {
             using var conn = new SqlConnection(connString);
             await conn.OpenAsync();
+            try
+            {
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(7);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
-            var repo = new UserRepo(_factory, _sql);
-            await repo.CreateUserAsync(MockData.GetCreateUserParameters().First());
+                var repo = new UserRepo(_factory, _sql);
+                await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).First());
 
-            var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUser);
-            Assert.AreEqual(MockData.Username, inserted.UserName);
+                var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUser);
+                Assert.AreEqual(MockData.Username, inserted.UserName);
 
-            // cleanup (when not using TransactionScope)
-            await conn.ExecuteAsync(TestQueries.DeleteUser);
-            await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
         }
 
         /// <summary>
@@ -94,14 +105,21 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         [TestMethod, TestCategory("Integration")]
         public async Task CreateUserAsync_WhenDuplicateTask_ThrowsOrFailsGracefully()
         {
-            var param = MockData.GetCreateUserParameters().ElementAt(1);
-            var repo = new UserRepo(_factory, _sql);
-
-            // Seed first insert
-            await repo.CreateUserAsync(param);
-
+            await using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
             try
             {
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(8);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                var param = MockData.GetCreateUserParameters(role.Id).ElementAt(1);
+                var repo = new UserRepo(_factory, _sql);
+
+                // Seed first insert
+                await repo.CreateUserAsync(param);
+
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
                 var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateUserAsync(param));
@@ -112,10 +130,41 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             }
             finally
             {
-                await using var conn = new SqlConnection(connString);
-                await conn.OpenAsync();
                 await conn.ExecuteAsync(TestQueries.DeleteUser);
                 await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+        }
+
+        /// <summary>
+        /// Gets the user asynchronous returns user from database.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task GetUserAsync_ReturnsUser_FromDb()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+
+            try
+            {
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(9);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                var repo = new UserRepo(_factory, _sql);
+                await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).First());
+
+                var result = await repo.GetUserAsync(MockData.GetCreateUserParameters(role.Id).First().Email);
+
+                Assert.IsNotNull(result);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
             }
         }
 
