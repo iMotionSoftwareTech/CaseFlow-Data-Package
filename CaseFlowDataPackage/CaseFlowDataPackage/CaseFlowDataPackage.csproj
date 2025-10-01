@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>IMotionSoftware.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>IMotionSoftware.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Authors>IMotionSoftware</Authors>
+    <Title>$(MSBuildProjectName)</Title>
+    <RepositoryType>github</RepositoryType>
+    <Copyright>IMotion Software 2025</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>IMotionSoftwareLogo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/iMotionSoftwareTech/CaseFlow-Data-Package</RepositoryUrl>
+    <PackageTags>IMotionFoftware;DAL;CaseFlow;DataPackage;Package</PackageTags>
+    <Description>This package serves as the dedicated Data Access Layer (DAL) for the CaseFlow application suite. It is built to provide a high-performance, efficient, and maintainable interface for all database interactions.
+
+Key Features:
+
+Dapper Micro-ORM: Utilizes Dapper to provide a lightweight and fast object-relational mapping solution. This allows for direct and efficient execution of raw SQL queries and stored procedures, minimizing overhead and maximizing performance.
+
+Stored Procedure-Centric: All data operations are encapsulated within stored procedures on the database server. This approach centralizes business logic, enhances security, and improves performance by leveraging the database's optimized execution plans.
+
+Decoupled Architecture: The library is designed to be agnostic to the calling application (e.g., Web API, MVC app, or console app). It requires the database connection string to be passed via its constructor, promoting a clean, decoupled architecture that is easy to test and maintain.
+
+Asynchronous Operations: All public methods are asynchronous (e.g., CreateUserAsync, GetTaskAsync), ensuring non-blocking I/O operations. This is crucial for building scalable and responsive web applications.</Description>
+    <PackageProjectUrl>https://github.com/iMotionSoftwareTech/CaseFlow-Data-Package</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <UserSecretsId>3bf4c2e4-8369-4f75-ae46-2abd621012b8</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\IMotionSoftwareLogo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+  </ItemGroup>
+
+</Project>
