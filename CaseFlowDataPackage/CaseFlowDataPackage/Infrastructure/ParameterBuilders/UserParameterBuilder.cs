@@ -40,5 +40,18 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
 
             return parameters;
         }
+
+        /// <summary>
+        /// Gets the update password dynamic parameters.
+        /// </summary>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="DynamicParameters"/></returns>
+        public static DynamicParameters UpdatePasswordDynamicParameters (this int caseworkerId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("caseworkerId", caseworkerId, DbType.Int32, ParameterDirection.Input);
+
+            return parameters;
+        }
     }
 }

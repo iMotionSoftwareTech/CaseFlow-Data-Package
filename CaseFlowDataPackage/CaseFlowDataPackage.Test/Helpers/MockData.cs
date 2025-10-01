@@ -39,6 +39,11 @@ namespace CaseFlowDataPackage.Test.Helpers
         public static string UserException = "User already exists";
 
         /// <summary>
+        /// The task updated exception
+        /// </summary>
+        public static string TaskUpdatedException = "Task has already been updated.";
+
+        /// <summary>
         /// Gets the create role parameters.
         /// </summary>
         /// <returns>THe <see cref="IEnumerable{T}"/></returns>
@@ -89,7 +94,7 @@ namespace CaseFlowDataPackage.Test.Helpers
                 new CreateRoleParameter
                 {
                     RoleName = "Test Role 9",
-                    Description = "This is a nineth test role"
+                    Description = "This is a ninth test role"
                 },
                 new CreateRoleParameter
                 {
@@ -100,6 +105,16 @@ namespace CaseFlowDataPackage.Test.Helpers
                 {
                     RoleName = "Test Role 11",
                     Description = "This is a eleventh test role"
+                },
+                new CreateRoleParameter
+                {
+                    RoleName = "Test Role 12",
+                    Description = "This is a twelth test role"
+                },
+                new CreateRoleParameter
+                {
+                    RoleName = "Test Role 13",
+                    Description = "This is a thirteenth test role"
                 }
             };
         }
@@ -146,6 +161,27 @@ namespace CaseFlowDataPackage.Test.Helpers
                     Title = "Drug Posesssion",
                     Description = "Perpetrator caught with posession of Illegal substances",
                     DueDateTime = DateTime.Today.AddMonths(24)
+                },
+                new CreateTaskParameter
+                {
+                    CaseworkerId = caseworkerId,
+                    Title = "Gun Posessopm",
+                    Description = "Perpetrator caught with posession of Illegal firearm",
+                    DueDateTime = DateTime.Today.AddMonths(25)
+                },
+                new CreateTaskParameter
+                {
+                    CaseworkerId = caseworkerId,
+                    Title = "Bank Robbery",
+                    Description = "Perpetrator caught robbing bank",
+                    DueDateTime = DateTime.Today.AddMonths(27)
+                },
+                new CreateTaskParameter
+                {
+                    CaseworkerId = caseworkerId,
+                    Title = "J-Walking",
+                    Description = "Perpetrator caught walking on highway sector T354",
+                    DueDateTime = DateTime.Today.AddMonths(27)
                 }
             };
         }
@@ -468,6 +504,53 @@ namespace CaseFlowDataPackage.Test.Helpers
                 Username = "JSmith",
                 PasswordAttempt = 1,
                 IsLocked = false
+            };
+        }
+
+        /// <summary>
+        /// Gets the log task status parameter.
+        /// </summary>
+        /// <param name="taskId">The task identifier.</param>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="LogTaskStatusParameter"/></returns>
+        public static LogTaskStatusParameter GetLogTaskStatusParameter(int taskId, int caseworkerId)
+        {
+            return new LogTaskStatusParameter
+            {
+                TaskId = taskId,
+                StatusId = 2,
+                CaseworkerId = caseworkerId,
+                Notes = "",
+                LogDateTime = DateTime.Today
+            };
+        }
+
+        /// <summary>
+        /// Gets the log task status parameters.
+        /// </summary>
+        /// <param name="taskId">The task identifier.</param>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="IEnumerable{T}"/></returns>
+        public static IEnumerable<LogTaskStatusParameter> GetLogTaskStatusParameters(IEnumerable<int> taskIds, int caseworkerId)
+        {
+            return new List<LogTaskStatusParameter>
+            {
+                new LogTaskStatusParameter
+                {
+                    TaskId = taskIds.First(),
+                    StatusId = 2,
+                    CaseworkerId = caseworkerId,
+                    Notes = "Under review for further inspection",
+                    LogDateTime = DateTime.Today
+                },
+                new LogTaskStatusParameter
+                {
+                    TaskId = taskIds.ElementAt(1),
+                    StatusId = 2,
+                    CaseworkerId = caseworkerId,
+                    Notes = "The case is currently under review with a view to provide a court hearing date soon",
+                    LogDateTime = DateTime.Today
+                }
             };
         }
     }                  

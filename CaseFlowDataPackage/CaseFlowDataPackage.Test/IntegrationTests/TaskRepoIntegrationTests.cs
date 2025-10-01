@@ -211,6 +211,9 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             }
         }
 
+        /// <summary>
+        /// Gets the task with statuses by identifier asynchronous returns task statuses from database.
+        /// </summary>
         [TestMethod, TestCategory("Integration")]
         public async Task GetTaskWithStatusesByIdAsync_ReturnsTaskStatuses_FromDb()
         {
@@ -250,6 +253,149 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
                 await conn.ExecuteAsync(TestQueries.DeleteRole);
             }
+        }
+
+        /// <summary>
+        /// Logs the task status asynchronous writes task status returns1.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task LogTaskStatusAsync_WritesTaskStatus_Returns1()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+
+            try
+            {
+                var repo = new TaskRepo(_factory, _sql);
+
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(11);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                var userRepo = new UserRepo(_factory, _sql);
+                await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(4));
+
+                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(5));
+                var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+
+                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id));
+                var inserted = await conn.QuerySingleAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task.Id });
+
+                Assert.AreEqual(2, inserted.StatusId);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
+                await conn.ExecuteAsync(TestQueries.DeleteTask);
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+
+        }
+
+        /// <summary>
+        /// Logs the task status asynchronous when duplicate task status throws or fails gracefully.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task LogTaskStatusAsync_WhenDuplicateTaskStatus_ThrowsOrFailsGracefully()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+
+            try
+            {
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(12);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                var userRepo = new UserRepo(_factory, _sql);
+                await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
+                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+
+                var param = MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(6);
+                var repo = new TaskRepo(_factory, _sql);
+
+                // Create Task
+                await repo.CreateTaskAsync(param);
+                var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+
+                // Seed first insert
+                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id));                
+
+                // Act again with same name
+                // If your repo throws, assert throws; if it returns a code, assert that.
+                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id)));
+            }
+            catch (Exception e)
+            {
+                StringAssert.Contains(e.Message, MockData.TaskUpdatedException);
+            }
+            finally
+            {
+                await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
+                await conn.ExecuteAsync(TestQueries.DeleteTask);
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+        }
+
+        /// <summary>
+        /// Logs the task statuses asynchronous writes task statuses returns1.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task LogTaskStatusesAsync_WritesTaskStatuses_Returns1()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+
+            try
+            {
+                var repo = new TaskRepo(_factory, _sql);
+
+                // Create role
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(12);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                // Create user
+                var userRepo = new UserRepo(_factory, _sql);
+                await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(4));
+
+                // Create multiple tasks
+                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(6));
+                var task1 = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(7));
+                var task2 = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                var taskIds = new List<int>();
+                taskIds.Add(task1.Id);
+                taskIds.Add(task2.Id);
+
+                // Update task status for each task
+                await repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(taskIds, caseworker.Id));
+                var insertedTaskStatus1 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task1.Id });
+                var insertedTaskStatus2 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task2.Id });
+
+                Assert.AreEqual(2, insertedTaskStatus1.First().StatusId);
+                Assert.AreEqual(2, insertedTaskStatus2.First().StatusId);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteTaskStatus);
+                await conn.ExecuteAsync(TestQueries.DeleteTask);
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+
         }
 
         // Simple inline factory for tests

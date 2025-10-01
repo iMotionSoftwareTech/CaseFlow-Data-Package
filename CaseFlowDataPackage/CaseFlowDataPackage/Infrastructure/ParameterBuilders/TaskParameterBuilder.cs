@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using System.Data;
-using System.Runtime.CompilerServices;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
 {
@@ -43,13 +42,49 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
         /// Gets all task with statuses by identifier parameters.
         /// </summary>
         /// <param name="taskId">The task identifier.</param>
-        /// <returns></returns>
+        /// <returns>The <see cref="DynamicParameters"/></returns>
         public static DynamicParameters GetAllTaskWithStatusesByIdParameters(this int taskId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("taskId", taskId, DbType.Int32, ParameterDirection.Input);
 
             return parameters;
+        }
+
+        /// <summary>
+        /// Gets the log task status parameters.
+        /// </summary>
+        /// <param name="logTaskStatusParameter">The log task status parameter.</param>
+        /// <returns>The <see cref="DynamicParameters"/></returns>
+        public static DynamicParameters GetLogTaskStatusParameters(this LogTaskStatusParameter logTaskStatusParameter)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("taskId", logTaskStatusParameter.TaskId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("statusId", logTaskStatusParameter.StatusId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("caseworkerId", logTaskStatusParameter.CaseworkerId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("notes", logTaskStatusParameter.Notes, DbType.String, ParameterDirection.Input);
+            parameters.Add("logDateTime", logTaskStatusParameter.LogDateTime, DbType.DateTime2, ParameterDirection.Input);
+
+            return parameters;
+        }
+
+        /// <summary>
+        /// Tasks the update list TVP.
+        /// </summary>
+        /// <param name="rows">The rows.</param>
+        /// <returns>The <see cref="DataTable"/></returns>
+        public static DataTable ToTaskUpdateDataTable(this IEnumerable<LogTaskStatusParameter> rows)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("TaskId", typeof(int));
+            dt.Columns.Add("StatusId", typeof(int));
+            dt.Columns.Add("Notes", typeof(string));
+            dt.Columns.Add("LogDateTime", typeof(DateTime));
+
+            foreach (var r in rows)
+                dt.Rows.Add(r.TaskId, r.StatusId, r.Notes, r.LogDateTime);
+
+            return dt;
         }
     }
 }

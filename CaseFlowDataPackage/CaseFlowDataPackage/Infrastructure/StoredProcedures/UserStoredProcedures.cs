@@ -14,5 +14,10 @@
         /// The get user sp
         /// </summary>
         public static string GetUserSP = "caseFlow.GetUser";
+
+        /// <summary>
+        /// The update password attempt sp
+        /// </summary>
+        public static string UpdatePasswordAttemptSP = "caseFlow.UpdatePasswordAttempt";
     }
 }

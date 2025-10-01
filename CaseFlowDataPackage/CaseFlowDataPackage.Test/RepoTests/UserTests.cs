@@ -142,5 +142,32 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
                   UserStoredProcedures.GetUserSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
         }
+
+        /// <summary>
+        /// Updates the password attempt returns success count test.
+        /// </summary>
+        [TestMethod, TestCategory("UnitTest")]
+        public async Task UpdatePasswordAttempt_ReturnsSuccessCount_Test()
+        {
+            // Arrange
+            _sql
+              .Setup(s => s.ExecuteAsync(
+                  _conn.Object,
+                  UserStoredProcedures.UpdatePasswordAttemptSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              .ReturnsAsync(-1);
+
+            // Act
+            var result = await _repo.UpdatePasswordAttemptAsync(1);
+
+            //Assert
+            Assert.AreEqual(-1, result);
+            _sql.Verify(s =>
+                s.ExecuteAsync(
+                  _conn.Object,
+                  UserStoredProcedures.UpdatePasswordAttemptSP,
+                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                Times.Once);
+        }
     }
 }

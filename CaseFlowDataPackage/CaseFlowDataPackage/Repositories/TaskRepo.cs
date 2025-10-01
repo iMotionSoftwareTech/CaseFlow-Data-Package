@@ -1,9 +1,11 @@
-﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
+﻿using Dapper;
+using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 {
@@ -91,6 +93,43 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 
             var parameters = taskId.GetAllTaskWithStatusesByIdParameters();
             var result = await _sqlRunner.QueryAsync<TaskStatusDto>(conn, TaskStoredProcedures.GetTaskWithStatusesByIdSP, parameters);
+            return result;
+        }
+
+        /// <summary>
+        /// Logs the task status asynchronous.
+        /// </summary>
+        /// <param name="logTaskStatusParameter">The log task status parameter.</param>
+        /// <returns>
+        /// The <see cref="Task{int}" />
+        /// </returns>
+        public async Task<int> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter)
+        {
+            using var conn = _connFactory.Create();
+            conn.Open();
+
+            var parameters = logTaskStatusParameter.GetLogTaskStatusParameters();
+            return await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.LogTaskStatusSP, parameters);
+        }
+
+        /// <summary>
+        /// Logs the task statuses asynchronous.
+        /// </summary>
+        /// <param name="logTaskStatusParameters">The log task status parameters.</param>
+        /// <returns>
+        /// The <see cref="Task{int}" />
+        /// </returns>
+        public async Task<int> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters)
+        {
+            using var conn = _connFactory.Create();
+            conn.Open();
+
+            var tvp = logTaskStatusParameters.ToTaskUpdateDataTable().AsTableValuedParameter("caseFlow.TaskUpdateList");
+            var parameters = new DynamicParameters();
+            parameters.Add("taskToUpdate", tvp);
+            parameters.Add("caseworkerId", logTaskStatusParameters.First().CaseworkerId);
+
+            var result = await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.LogTaskStatusesSP, parameters);
             return result;
         }
     }

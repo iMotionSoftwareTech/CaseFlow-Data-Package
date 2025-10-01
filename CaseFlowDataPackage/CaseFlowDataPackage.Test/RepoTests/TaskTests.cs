@@ -1,8 +1,10 @@
 using CaseFlowDataPackage.Test.Helpers;
+using Dapper;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
 using IMotionSoftware.CaseFlowDataPackage.Repositories;
+using Microsoft.Data.SqlClient;
 using Moq;
 using System.Data;
 
@@ -197,5 +199,91 @@ public class TaskTests
         _sql.Verify(s => s.QuerySingleAsync<IEnumerable<TaskStatusDto>>(_conn.Object,
               TaskStoredProcedures.GetTaskWithStatusesByIdSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
+    }
+
+    /// <summary>
+    /// Logs the task status returns success count test.
+    /// </summary>
+    [TestMethod, TestCategory("UnitTest")]
+    public async Task LogTaskStatus_ReturnsSuccessCount_Test()
+    {
+        // Arrange
+        _sql
+          .Setup(s => s.ExecuteAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ReturnsAsync(-1);
+
+        // Act
+        var result = await _repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(1, 2));
+
+        //Assert
+        Assert.AreEqual(-1, result);
+        _sql.Verify(s =>
+            s.ExecuteAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+            Times.Once);
+    }
+
+    /// <summary>
+    /// Logs the task status throws exception test.
+    /// </summary>
+    [TestMethod, TestCategory("UnitTest")]
+    public async Task LogTaskStatus_ThrowsException_Test()
+    {
+        // Arrange
+        var createTaskParam = MockData.GetCreateTaskParameters(1).ElementAt(1);
+        _sql
+          .Setup(s => s.ExecuteAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ThrowsAsync(new Exception(MockData.TaskUpdatedException));
+
+        // Act
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => _repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(1, 2)));
+
+        // Assert
+        Assert.AreEqual(MockData.TaskUpdatedException, ex.Message);
+
+        _sql.Verify(s =>
+            s.ExecuteAsync(
+               _conn.Object,
+              TaskStoredProcedures.LogTaskStatusSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+            Times.Once);
+    }
+
+    /// <summary>
+    /// Logs the task statuses returns success count test.
+    /// </summary>
+    [TestMethod, TestCategory("UnitTest")]
+    public async Task LogTaskStatuses_ReturnsSuccessCount_Test()
+    {
+        // Arrange
+        _sql
+          .Setup(s => s.ExecuteAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusesSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ReturnsAsync(-1);
+
+        // Act
+        var tasks = new List<int>();
+        tasks.Add(1);
+        tasks.Add(2);
+        var result = await _repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(tasks, 3));
+
+        //Assert
+        Assert.AreEqual(-1, result);
+        _sql.Verify(s =>
+            s.ExecuteAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusesSP,
+              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+            Times.Once);
     }
 }
