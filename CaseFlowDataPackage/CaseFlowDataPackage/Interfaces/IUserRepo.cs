@@ -21,5 +21,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <param name="email">The email.</param>
         /// <returns>The <see cref="Task{T}"/></returns>
         Task<UserDetailDto> GetUserAsync(string email);
+
+        /// <summary>
+        /// Updates the password attempt asynchronous.
+        /// </summary>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="Task{int}"/></returns>
+        Task<int> UpdatePasswordAttemptAsync(int caseworkerId);
     }
 }

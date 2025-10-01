@@ -34,5 +34,19 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <param name="taskId">The task identifier.</param>
         /// <returns>The <see cref="Task{T}"/></returns>
         Task<IEnumerable<TaskStatusDto>> GetTaskWithStatusesByIdAsync(int taskId);
+
+        /// <summary>
+        /// Logs the task status asynchronous.
+        /// </summary>
+        /// <param name="logTaskStatusParameter">The log task status parameter.</param>
+        /// <returns>The <see cref="Task{int}"/></returns>
+        Task<int> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter);
+
+        /// <summary>
+        /// Logs the task statuses asynchronous.
+        /// </summary>
+        /// <param name="logTaskStatusParameters">The log task status parameters.</param>
+        /// <returns>The <see cref="Task{int}"/></returns>
+        Task<int> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters);
     }
 }

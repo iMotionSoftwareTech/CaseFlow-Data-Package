@@ -168,6 +168,39 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             }
         }
 
+        /// <summary>
+        /// Updates the password attempt asynchronous updates password returns success.
+        /// </summary>
+        [TestMethod, TestCategory("Integration")]
+        public async Task UpdatePasswordAttemptAsync_UpdatesPassword_ReturnsSuccess()
+        {
+            using var conn = new SqlConnection(connString);
+            await conn.OpenAsync();
+            try
+            {
+                var roleRepo = new RoleRepo(_factory, _sql);
+                var roleParam = MockData.GetCreateRoleParameters().ElementAt(10);
+                await roleRepo.CreateRoleAsync(roleParam);
+                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+
+                var repo = new UserRepo(_factory, _sql);
+                await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
+
+                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                await repo.UpdatePasswordAttemptAsync(caseworker.Id);
+
+                var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUserUpdatedPasswordAttempt);
+                Assert.AreEqual(1, inserted.PasswordAttempt);
+            }
+            finally
+            {
+                // cleanup (when not using TransactionScope)
+                await conn.ExecuteAsync(TestQueries.DeleteUser);
+                await conn.ExecuteAsync(TestQueries.DeleteCaseworker);
+                await conn.ExecuteAsync(TestQueries.DeleteRole);
+            }
+        }
+
         // Simple inline factory for tests
         /// <summary>
         /// The InlineFactory

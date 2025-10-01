@@ -49,5 +49,15 @@
         /// The get caseworker
         /// </summary>
         public static string GetCaseworker = "SELECT TOP 1 * FROM caseFlow.Caseworker ORDER BY ID DESC";
+
+        /// <summary>
+        /// The get user updated password attempt
+        /// </summary>
+        public static string GetUserUpdatedPasswordAttempt = "SELECT TOP 1 * FROM caseFlow.[User] WHERE PasswordAttempt > 0 ORDER BY Id DESC";
+
+        /// <summary>
+        /// The get task status
+        /// </summary>
+        public static string GetTaskStatus = "SELECT TOP 1 * FROM caseFlow.TaskStatus WHERE TaskId = @taskId ORDER BY Id DESC";
     }
 }

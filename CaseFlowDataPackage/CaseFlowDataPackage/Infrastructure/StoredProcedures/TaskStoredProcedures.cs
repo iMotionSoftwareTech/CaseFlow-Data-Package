@@ -24,5 +24,16 @@
         /// The get task with statuses by identifier sp
         /// </summary>
         public static string GetTaskWithStatusesByIdSP = "caseFlow.GetTaskWithStatusesById";
+
+        /// <summary>
+        /// The log task status sp
+        /// </summary>
+        public static string LogTaskStatusSP = "caseFlow.LogTaskStatus";
+
+
+        /// <summary>
+        /// The log task statuses sp
+        /// </summary>
+        public static string LogTaskStatusesSP = "caseFlow.LogTaskStatuses";
     }
 }

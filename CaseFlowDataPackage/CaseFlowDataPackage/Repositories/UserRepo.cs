@@ -55,5 +55,21 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
             var parameters = email.GetUserDynamicParameters();
             return await _sqlRunner.QuerySingleAsync<UserDetailDto>(conn, UserStoredProcedures.GetUserSP, parameters);
         }
+
+        /// <summary>
+        /// Updates the password attempt asynchronous.
+        /// </summary>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>
+        /// The <see cref="Task{int}" />
+        /// </returns>
+        public async Task<int> UpdatePasswordAttemptAsync(int caseworkerId)
+        {
+            using var conn = _connFactory.Create();
+            conn.Open();
+
+            var parameters = caseworkerId.UpdatePasswordDynamicParameters();
+            return await _sqlRunner.ExecuteAsync(conn, UserStoredProcedures.UpdatePasswordAttemptSP, parameters);
+        }
     }
 }
