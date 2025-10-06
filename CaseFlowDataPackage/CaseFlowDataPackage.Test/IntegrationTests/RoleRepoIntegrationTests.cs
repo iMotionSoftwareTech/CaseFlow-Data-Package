@@ -41,8 +41,6 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development"}.json", optional: true)
                 .AddUserSecrets<RoleRepoIntegrationTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
