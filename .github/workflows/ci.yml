@@ -20,11 +20,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: List repo files
+        run: ls -R
+
+      - name: Restore
+        run: dotnet restore CaseFlowDataPackage/CaseFlowDataPackage.sln
 
       - name: Build
-        run: dotnet build src/CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
+        run: dotnet build CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
 
-      - name: Run tests
-        run: dotnet test src/CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-build --verbosity normal
+      - name: Test
+        run: dotnet test CaseFlowDataPackage/CaseFlowDataPackage.sln
