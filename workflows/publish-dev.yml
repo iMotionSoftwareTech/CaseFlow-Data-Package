@@ -1,0 +1,38 @@
+name: publish-dev
+
+on:
+  push:
+    tags:
+      - 'v*-dev.*'     # e.g., v1.2.3-dev.1
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  pack-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version from tag
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Pack (pre-release)
+        run: dotnet pack CaseFlow-Data-Package/blob/dev/CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=${{ steps.ver.outputs.version }}
+
+      - name: Push to GitHub Packages (internal)
+        run: dotnet nuget push "./artifacts/*.nupkg" \
+               --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+               --api-key "${{ secrets.GITHUB_TOKEN }}"
