@@ -30,7 +30,7 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Pack (pre-release)
-        run: dotnet pack CaseFlow-Data-Package/blob/dev/CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=${{ steps.ver.outputs.version }}
+        run: dotnet pack src/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=${{ steps.ver.outputs.version }}
 
       - name: Push to GitHub Packages (internal)
         run: dotnet nuget push "./artifacts/*.nupkg" \
