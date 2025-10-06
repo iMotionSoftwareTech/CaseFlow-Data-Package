@@ -29,8 +29,12 @@ Asynchronous Operations: All public methods are asynchronous (e.g., CreateUserAs
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <UserSecretsId>3bf4c2e4-8369-4f75-ae46-2abd621012b8</UserSecretsId>
+<Configuration>
+  <PackageSources>
+    <add key="github" value="https://nuget.pkg.github.com/iMotionSoftwareTech/index.json"/>
+  </PackageSources>
+</Configuration>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\IMotionSoftwareLogo.png">
       <Pack>True</Pack>
