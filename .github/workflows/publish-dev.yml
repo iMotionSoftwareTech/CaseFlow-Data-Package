@@ -28,7 +28,7 @@ jobs:
         run: dotnet build CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
 
       - name: Pack
-        run: dotnet pack path/to/YourProject.csproj -c Release -o ./artifacts -p:Version=0.1.0-dev.${GITHUB_RUN_NUMBER}
+        run: dotnet pack CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=0.1.0-dev.${GITHUB_RUN_NUMBER}
 
       - name: Push to GitHub Packages
         run: dotnet nuget push "./artifacts/*.nupkg" \
