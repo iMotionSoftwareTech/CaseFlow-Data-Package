@@ -2,36 +2,24 @@ name: publish-dev
 
 on:
   push:
-    tags:
-      - 'v*-dev.*'
+    branches: [ dev ]
+    # or tags:
+    # tags:
+    #   - 'v*-dev.*'
 
 permissions:
-  contents: read
-  packages: write
+  contents: read       # allows Actions to read repo content
+  packages: write      # allows pushing NuGet packages to GitHub Packages
 
 jobs:
   pack-and-push:
     runs-on: ubuntu-latest
-    if: github.ref_type == 'tag' && contains(github.ref_name, '-dev.')
+
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-
-      # ensure tag is on dev (optional guard)
-      - name: Ensure tag is based on 'dev'
-        run: |
-          git fetch origin dev --depth=1
-          if ! git merge-base --is-ancestor origin/dev "$GITHUB_SHA"; then
-            echo "Tag $GITHUB_REF_NAME not on dev; skipping."
-            exit 78
-          fi
-
       - uses: actions/setup-dotnet@v4
-        with: { dotnet-version: '8.0.x' }
-
-      - name: Extract version from tag
-        id: ver
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        with:
+          dotnet-version: '8.0.x'
 
       - name: Restore
         run: dotnet restore CaseFlowDataPackage/CaseFlowDataPackage.sln
@@ -39,12 +27,11 @@ jobs:
       - name: Build
         run: dotnet build CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
 
-      # Pack the specific project you want to publish:
-      - name: Pack (pre-release)
-        run: dotnet pack CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=${{ steps.ver.outputs.version }}
+      - name: Pack
+        run: dotnet pack path/to/YourProject.csproj -c Release -o ./artifacts -p:Version=0.1.0-dev.${GITHUB_RUN_NUMBER}
 
       - name: Push to GitHub Packages
         run: dotnet nuget push "./artifacts/*.nupkg" \
-               --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-               --api-key "${{ secrets.GITHUB_TOKEN }}" \
-               --skip-duplicate
+          --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+          --api-key "${{ secrets.GITHUB_TOKEN }}" \
+          --skip-duplicate
