@@ -29,7 +29,10 @@ jobs:
 
       - name: Pack
         run: dotnet pack CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=0.1.0-dev.${GITHUB_RUN_NUMBER}
-
+        
+      - name: List artifacts
+        run: ls -l ./artifacts || true
+        
       - name: Push to GitHub Packages
         run: |
           dotnet nuget push "./artifacts/*.nupkg" 
