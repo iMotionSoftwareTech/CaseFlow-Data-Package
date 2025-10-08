@@ -41,8 +41,6 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development"}.json", optional: true)
                 .AddUserSecrets<RoleRepoIntegrationTests>(optional: true)
                 .AddEnvironmentVariables()
                 .Build();
@@ -73,6 +71,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// Creates the role asynchronous writes role returns1.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
+        [Ignore]
         public async Task CreateRoleAsync_WritesRole_Returns1()
         {
             using var conn = new SqlConnection(connString);
@@ -96,6 +95,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// Creates the role asynchronous when duplicate name throws or fails gracefully.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
+        [Ignore]
         public async Task CreateRoleAsync_WhenDuplicateName_ThrowsOrFailsGracefully()
         {
             var param = MockData.GetCreateRoleParameters().ElementAt(1);
@@ -126,6 +126,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
         /// Gets all roles asynchronous returns roles from database.
         /// </summary>
         [TestMethod, TestCategory("Integration")]
+        [Ignore]
         public async Task GetAllRolesAsync_ReturnsRoles_FromDb()
         {
             using var conn = new SqlConnection(connString);

@@ -11,7 +11,7 @@
     <RepositoryType>github</RepositoryType>
     <Copyright>IMotion Software 2025</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>IMotionSoftwareLogo.png</PackageIcon>
+    <PackageIcon>IMotionSoftwareLogo.jpg</PackageIcon>
     <RepositoryUrl>https://github.com/iMotionSoftwareTech/CaseFlow-Data-Package</RepositoryUrl>
     <PackageTags>IMotionFoftware;DAL;CaseFlow;DataPackage;Package</PackageTags>
     <Description>This package serves as the dedicated Data Access Layer (DAL) for the CaseFlow application suite. It is built to provide a high-performance, efficient, and maintainable interface for all database interactions.
@@ -31,12 +31,12 @@ Asynchronous Operations: All public methods are asynchronous (e.g., CreateUserAs
     <UserSecretsId>3bf4c2e4-8369-4f75-ae46-2abd621012b8</UserSecretsId>
 <Configuration>
   <PackageSources>
-    <add key="github" value="https://nuget.pkg.github.com/iMotionSoftwareTech/index.json"/>
+    <add key="github" value="https://nuget.pkg.github.com/iMotionSoftwareTech/index.json" />
   </PackageSources>
 </Configuration>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\IMotionSoftwareLogo.png">
+    <None Include="..\..\IMotionSoftwareLogo.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

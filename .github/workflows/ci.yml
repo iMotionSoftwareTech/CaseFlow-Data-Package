@@ -1,0 +1,33 @@
+name: CI - Build & Test (Dev)
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: List repo files
+        run: ls -R
+
+      - name: Restore
+        run: dotnet restore CaseFlowDataPackage/CaseFlowDataPackage.sln
+
+      - name: Build
+        run: dotnet build CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test CaseFlowDataPackage/CaseFlowDataPackage.sln

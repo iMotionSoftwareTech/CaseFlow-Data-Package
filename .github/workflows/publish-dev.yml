@@ -1,0 +1,41 @@
+name: publish-dev
+
+on:
+  push:
+    branches: [ dev ]
+    # or tags:
+    # tags:
+    #   - 'v*-dev.*'
+
+permissions:
+  contents: read       # allows Actions to read repo content
+  packages: write      # allows pushing NuGet packages to GitHub Packages
+
+jobs:
+  pack-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore CaseFlowDataPackage/CaseFlowDataPackage.sln
+
+      - name: Build
+        run: dotnet build CaseFlowDataPackage/CaseFlowDataPackage.sln -c Release --no-restore
+
+      - name: Pack
+        run: dotnet pack CaseFlowDataPackage/CaseFlowDataPackage/CaseFlowDataPackage.csproj -c Release -o ./artifacts -p:Version=0.1.0-dev.${GITHUB_RUN_NUMBER}
+        
+      - name: List artifacts
+        run: ls -l ./artifacts || true
+        
+      - name: Push to GitHub Packages
+        run: |
+         dotnet nuget push "./artifacts/*.nupkg" \
+          --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+          --api-key "${{ secrets.GITHUB_TOKEN }}" \
+          --skip-duplicate
