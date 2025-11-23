@@ -6,12 +6,12 @@
     public class TaskDto
     {
         /// <summary>
-         /// Gets or sets the identifier.
-         /// </summary>
-         /// <value>
-         /// The identifier.
-         /// </value>
-        public int Id { get; set; }
+        /// Gets or sets the task identifier.
+        /// </summary>
+        /// <value>
+        /// The task identifier.
+        /// </value>
+        public int TaskId { get; set; }
 
         /// <summary>
         /// Gets or sets the title.
@@ -38,11 +38,11 @@
         public string? Status { get; set; }
 
         /// <summary>
-        /// Gets or sets the due date.
+        /// Gets or sets the due date time.
         /// </summary>
         /// <value>
-        /// The due date.
+        /// The due date time.
         /// </value>
-        public DateTime DueDate { get; set; }
+        public DateTime DueDateTime { get; set; }
     }
 }

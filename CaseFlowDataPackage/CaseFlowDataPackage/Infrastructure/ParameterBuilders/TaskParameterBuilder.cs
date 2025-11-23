@@ -28,13 +28,16 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
         /// <summary>
         /// Gets all tasks dynamic parameters.
         /// </summary>
-        /// <param name="getAllTasksParameter">The get all tasks parameter.</param>
-        /// <returns>The <see cref="DynamicParameters"/></returns>
-        public static DynamicParameters GetAllTasksDynamicParameters(this GetAllTasksParameter getAllTasksParameter)
+        /// <param name="pageNumber">The page number.</param>
+        /// <param name="pageSize">Size of the page.</param>
+        /// <returns>
+        /// The <see cref="DynamicParameters" />
+        /// </returns>
+        public static DynamicParameters GetAllTasksDynamicParameters(this int pageNumber, int pageSize)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("pageNumber", getAllTasksParameter.PageNumber, DbType.Int32, ParameterDirection.Input);
-            parameters.Add("pageSize", getAllTasksParameter.PageSize, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("pageNumber", pageNumber, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("pageSize", pageSize, DbType.Int32, ParameterDirection.Input);
             return parameters;
         }
 

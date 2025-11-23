@@ -166,11 +166,11 @@ public class TaskTests
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(_multi.Object);
 
         // Act
-        var (totalCount, taskWithStatus) = await _repo.GetAllTasksAsync(MockData.GetAllTasksParameter());
+        var (totalCount, taskWithStatus) = await _repo.GetAllTasksAsync(1, 10);
 
         // Assert
         Assert.AreEqual(expectedTotal, totalCount);
-        CollectionAssert.AreEquivalent(MockData.GetTasks().Select(m => m.Id).ToList(), taskWithStatus.Select(x => x.Id).ToList());
+        CollectionAssert.AreEquivalent(MockData.GetTasks().Select(m => m.TaskId).ToList(), taskWithStatus.Select(x => x.TaskId).ToList());
         _sql.Verify(s => s.QueryMultipleAsync(
             _conn.Object,
             TaskStoredProcedures.GetAllTasksSP,

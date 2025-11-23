@@ -181,7 +181,6 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 
             try
             {
-                var param = MockData.GetAllTasksParameter();
                 var repo = new TaskRepo(_factory, _sql);
 
                 var roleRepo = new RoleRepo(_factory, _sql);
@@ -196,7 +195,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(2));
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(3));
 
-                var (total, tasks) = await repo.GetAllTasksAsync(param);
+                var (total, tasks) = await repo.GetAllTasksAsync(1, 10);
 
                 Assert.IsTrue(total > 0);
                 Assert.IsNotNull(tasks);
@@ -243,7 +242,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 
                 // Execute call to Get Tasks with Statuses SP
                 var inserted = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
-                var result = await repo.GetTaskWithStatusesByIdAsync(inserted.Id);
+                var result = await repo.GetTaskWithStatusesByIdAsync(inserted.TaskId);
 
                 Assert.IsNotNull(result);
             }
@@ -284,8 +283,8 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(5));
                 var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
 
-                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id));
-                var inserted = await conn.QuerySingleAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task.Id });
+                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id));
+                var inserted = await conn.QuerySingleAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task.TaskId });
 
                 Assert.AreEqual(2, inserted.StatusId);
             }
@@ -330,11 +329,11 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
 
                 // Seed first insert
-                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id));                
+                await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id));                
 
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.Id, caseworker.Id)));
+                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id)));
             }
             catch (Exception e)
             {
@@ -381,13 +380,13 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(7));
                 var task2 = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
                 var taskIds = new List<int>();
-                taskIds.Add(task1.Id);
-                taskIds.Add(task2.Id);
+                taskIds.Add(task1.TaskId);
+                taskIds.Add(task2.TaskId);
 
                 // Update task status for each task
                 await repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(taskIds, caseworker.Id));
-                var insertedTaskStatus1 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task1.Id });
-                var insertedTaskStatus2 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task2.Id });
+                var insertedTaskStatus1 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task1.TaskId });
+                var insertedTaskStatus2 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task2.TaskId });
 
                 Assert.AreEqual(2, insertedTaskStatus1.First().StatusId);
                 Assert.AreEqual(2, insertedTaskStatus2.First().StatusId);

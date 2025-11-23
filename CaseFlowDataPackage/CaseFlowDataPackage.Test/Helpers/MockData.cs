@@ -411,24 +411,24 @@ namespace CaseFlowDataPackage.Test.Helpers
             {
                 new TaskDto
                 {
-                    Id = 1,
+                    TaskId = 1,
                     Title = "Assault and Battery",
                     Description = "Assult and battery case",
-                    DueDate = DateTime.Now.AddYears(1)
+                    DueDateTime = DateTime.Now.AddYears(1)
                 },
                 new TaskDto
                 {
-                    Id = 2,
+                    TaskId = 2,
                     Title = "Theft",
                     Description = "Theft at supermarket case",
-                    DueDate = DateTime.Now.AddYears(1)
+                    DueDateTime = DateTime.Now.AddYears(1)
                 },
                 new TaskDto
                 {
-                    Id = 3,
+                    TaskId = 3,
                     Title = "Kidnapping",
                     Description = "Kidnapping case",
-                    DueDate = DateTime.Now.AddYears(1)
+                    DueDateTime = DateTime.Now.AddYears(1)
                 },
             };
         }
@@ -471,19 +471,6 @@ namespace CaseFlowDataPackage.Test.Helpers
                     LogDateTime = DateTime.Now.AddDays(5),
                     Notes = "Hearing scheduled for the case"
                 },
-            };
-        }
-
-        /// <summary>
-        /// Gets all tasks parameter.
-        /// </summary>
-        /// <returns>The <see cref="GetAllTasksParameter"/></returns>
-        public static GetAllTasksParameter GetAllTasksParameter()
-        {
-            return new GetAllTasksParameter
-            {
-                PageNumber = 1,
-                PageSize = 10
             };
         }
 
