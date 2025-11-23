@@ -24,9 +24,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <summary>
         /// Gets all tasks asynchronous.
         /// </summary>
-        /// <param name="getAllTasksParameter">The get all tasks parameter.</param>
-        /// <returns>The <see cref="Task{T}"/></returns>
-        Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(GetAllTasksParameter getAllTasksParameter);
+        /// <param name="pageNumber">The page number.</param>
+        /// <param name="pageSize">Size of the page.</param>
+        /// <returns>
+        /// The <see cref="Task{T}" />
+        /// </returns>
+        Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(int pageNumber, int pageSize);
 
         /// <summary>
         /// Gets the task with statuses by identifier.

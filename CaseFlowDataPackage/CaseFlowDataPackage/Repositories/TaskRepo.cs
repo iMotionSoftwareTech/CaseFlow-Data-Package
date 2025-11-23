@@ -64,16 +64,17 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// <summary>
         /// Gets all tasks asynchronous.
         /// </summary>
-        /// <param name="getAllTasksParameter">The get all tasks parameter.</param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(GetAllTasksParameter getAllTasksParameter)
+        public async Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(int pageNumber, int pageSize)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            var parameters = getAllTasksParameter.GetAllTasksDynamicParameters();
+            var parameters = pageNumber.GetAllTasksDynamicParameters(pageSize);
             await using var multiResults = await _sqlRunner.QueryMultipleAsync(conn, TaskStoredProcedures.GetAllTasksSP, parameters);
             var totalNoOfRecords = await multiResults.ReadSingleAsync<int>();
             var tasks = await multiResults.ReadAsync<TaskDto>();
