@@ -79,23 +79,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         {
             // Arrange
             var createRoleParam = MockData.GetCreateRoleParameters().First();
+            var expectedResult = MockData.GetNewRoleResult();
             _sql
-              .Setup(s => s.ExecuteAsync(
+              .Setup(s => s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  RoleStoredProcedures.CreateRoleSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-              .ReturnsAsync(-1);
+                  RoleStoredProcedures.CreateRoleSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewRoleResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              .ReturnsAsync(expectedResult);
 
             // Act
             var result = await _repo.CreateRoleAsync(createRoleParam);
 
             // Assert
-            Assert.AreEqual(-1, result);
+            Assert.AreEqual(expectedResult, result);
             _sql.Verify(s =>
-                s.ExecuteAsync(
-                    _conn.Object,
-                    RoleStoredProcedures.CreateRoleSP,
-                    It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                s.ExecuteWithOutputAsync(
+                  _conn.Object,
+                  RoleStoredProcedures.CreateRoleSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewRoleResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
         }
 
@@ -108,10 +109,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
             // Arrange
             var createRoleParam = MockData.GetCreateRoleParameters().ElementAt(1);
             _sql
-              .Setup(s => s.ExecuteAsync(
+              .Setup(s => s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  RoleStoredProcedures.CreateRoleSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+                  RoleStoredProcedures.CreateRoleSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewRoleResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
               .ThrowsAsync(new Exception(MockData.RoleException));
 
             // Act
@@ -121,10 +122,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
             Assert.AreEqual(MockData.RoleException, ex.Message);
 
             _sql.Verify(s =>
-                s.ExecuteAsync(
-                    _conn.Object,
-                    RoleStoredProcedures.CreateRoleSP,
-                    It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                s.ExecuteWithOutputAsync(
+                  _conn.Object,
+                  RoleStoredProcedures.CreateRoleSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewRoleResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
         }
 
@@ -132,7 +133,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         public async Task GetAllRoles_ReturnsCaseworkerRolesTest()
         {
             // Arrange
-            _sql.Setup(s => s.QueryAsync<CaseworkerRoleDto>(_conn.Object,
+            _sql.Setup(s => s.QueryAsync<CaseworkerRoleResult>(_conn.Object,
                   RoleStoredProcedures.GetAllRolesSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetCaseworkerRoles());
 
@@ -141,7 +142,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
 
             // Assert
             Assert.IsNotNull(result);
-            _sql.Verify(s => s.QueryAsync<CaseworkerRoleDto>(_conn.Object,
+            _sql.Verify(s => s.QueryAsync<CaseworkerRoleResult>(_conn.Object,
                   RoleStoredProcedures.GetAllRolesSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
         }

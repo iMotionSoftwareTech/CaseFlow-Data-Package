@@ -81,23 +81,24 @@ public class TaskTests
     {
         // Arrange
         var createTaskParam = MockData.GetCreateTaskParameters(1).First();
+        var expectedResult = MockData.GetNewTaskResult();
         _sql
-          .Setup(s => s.ExecuteAsync(
+          .Setup(s => s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.CreateTaskSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-          .ReturnsAsync(-1);
+              TaskStoredProcedures.CreateTaskSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewTaskResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ReturnsAsync(expectedResult);
 
         // Act
         var result = await _repo.CreateTaskAsync(createTaskParam);
 
         //Assert
-        Assert.AreEqual(-1, result);
+        Assert.AreEqual(expectedResult, result);
         _sql.Verify(s =>
-            s.ExecuteAsync(
+            s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.CreateTaskSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+              TaskStoredProcedures.CreateTaskSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewTaskResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
             Times.Once);
     }
 
@@ -110,10 +111,10 @@ public class TaskTests
         // Arrange
         var createTaskParam = MockData.GetCreateTaskParameters(1).ElementAt(1);
         _sql
-          .Setup(s => s.ExecuteAsync(
+          .Setup(s => s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.CreateTaskSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              TaskStoredProcedures.CreateTaskSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewTaskResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
           .ThrowsAsync(new Exception(MockData.TaskException));
 
         // Act
@@ -123,10 +124,10 @@ public class TaskTests
         Assert.AreEqual(MockData.TaskException, ex.Message);
 
         _sql.Verify(s =>
-            s.ExecuteAsync(
+            s.ExecuteWithOutputAsync(
                _conn.Object,
-              TaskStoredProcedures.CreateTaskSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+              TaskStoredProcedures.CreateTaskSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewTaskResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
             Times.Once);
     }
 
@@ -137,7 +138,7 @@ public class TaskTests
     public async Task GetAllStatuses_ReturnsStatuses_Test()
     {
         // Arrange
-        _sql.Setup(s => s.QueryAsync<StatusDto>(_conn.Object,
+        _sql.Setup(s => s.QueryAsync<StatusResult>(_conn.Object,
               TaskStoredProcedures.GetAllStatusesSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetStatuses());
 
@@ -146,7 +147,7 @@ public class TaskTests
 
         // Assert
         Assert.IsNotNull(result);
-        _sql.Verify(s => s.QueryAsync<StatusDto>(_conn.Object,
+        _sql.Verify(s => s.QueryAsync<StatusResult>(_conn.Object,
               TaskStoredProcedures.GetAllStatusesSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
     }
@@ -160,7 +161,7 @@ public class TaskTests
         // Arrange
         var expectedTotal = 3;
         _multi.Setup(m => m.ReadSingleAsync<int>()).ReturnsAsync(expectedTotal);
-        _multi.Setup(m => m.ReadAsync<TaskDto>()).ReturnsAsync(MockData.GetTasks());
+        _multi.Setup(m => m.ReadAsync<TaskResult>()).ReturnsAsync(MockData.GetTasks());
         _sql.Setup(s => s.QueryMultipleAsync(_conn.Object,
               TaskStoredProcedures.GetAllTasksSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(_multi.Object);
@@ -177,7 +178,7 @@ public class TaskTests
             It.IsAny<object?>(),
             null, null, null), Times.Once);
         _multi.Verify(m => m.ReadSingleAsync<int>(), Times.Once);
-        _multi.Verify(m => m.ReadAsync<TaskDto>(), Times.Once);
+        _multi.Verify(m => m.ReadAsync<TaskResult>(), Times.Once);
         _conn.Verify(c => c.Open(), Times.Once);
     }
 
@@ -187,7 +188,7 @@ public class TaskTests
     public async Task GetTaskWithStatusesById_ReturnsTaskWithStatus_Test()
     {
         // Arrange
-        _sql.Setup(s => s.QuerySingleAsync<IEnumerable<TaskStatusDto>>(_conn.Object,
+        _sql.Setup(s => s.QuerySingleAsync<IEnumerable<TaskStatusResult>>(_conn.Object,
               TaskStoredProcedures.GetTaskWithStatusesByIdSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetTaskStatuses());
 
@@ -196,7 +197,7 @@ public class TaskTests
 
         // Assert
         Assert.IsNotNull(result);
-        _sql.Verify(s => s.QuerySingleAsync<IEnumerable<TaskStatusDto>>(_conn.Object,
+        _sql.Verify(s => s.QuerySingleAsync<IEnumerable<TaskStatusResult>>(_conn.Object,
               TaskStoredProcedures.GetTaskWithStatusesByIdSP,
               It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
     }
@@ -208,23 +209,24 @@ public class TaskTests
     public async Task LogTaskStatus_ReturnsSuccessCount_Test()
     {
         // Arrange
+        var expectedResult = MockData.GetTaskUpdateResult();
         _sql
-          .Setup(s => s.ExecuteAsync(
+          .Setup(s => s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-          .ReturnsAsync(-1);
+              TaskStoredProcedures.LogTaskStatusSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, TaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ReturnsAsync(expectedResult);
 
         // Act
         var result = await _repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(1, 2));
 
         //Assert
-        Assert.AreEqual(-1, result);
+        Assert.AreEqual(expectedResult, result);
         _sql.Verify(s =>
-            s.ExecuteAsync(
+            s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+              TaskStoredProcedures.LogTaskStatusSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, TaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
             Times.Once);
     }
 
@@ -237,10 +239,10 @@ public class TaskTests
         // Arrange
         var createTaskParam = MockData.GetCreateTaskParameters(1).ElementAt(1);
         _sql
-          .Setup(s => s.ExecuteAsync(
+          .Setup(s => s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              TaskStoredProcedures.LogTaskStatusSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, TaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
           .ThrowsAsync(new Exception(MockData.TaskUpdatedException));
 
         // Act
@@ -250,10 +252,10 @@ public class TaskTests
         Assert.AreEqual(MockData.TaskUpdatedException, ex.Message);
 
         _sql.Verify(s =>
-            s.ExecuteAsync(
-               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+            s.ExecuteWithOutputAsync(
+              _conn.Object,
+              TaskStoredProcedures.LogTaskStatusSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, TaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
             Times.Once);
     }
 
@@ -264,12 +266,13 @@ public class TaskTests
     public async Task LogTaskStatuses_ReturnsSuccessCount_Test()
     {
         // Arrange
+        var expectedResult = MockData.GetBulkTaskUpdateResult();
         _sql
-          .Setup(s => s.ExecuteAsync(
+          .Setup(s => s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusesSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-          .ReturnsAsync(-1);
+              TaskStoredProcedures.LogTaskStatusesSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, BulkTaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+          .ReturnsAsync(expectedResult);
 
         // Act
         var tasks = new List<int>();
@@ -278,12 +281,12 @@ public class TaskTests
         var result = await _repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(tasks, 3));
 
         //Assert
-        Assert.AreEqual(-1, result);
+        Assert.AreEqual(expectedResult, result);
         _sql.Verify(s =>
-            s.ExecuteAsync(
+            s.ExecuteWithOutputAsync(
               _conn.Object,
-              TaskStoredProcedures.LogTaskStatusesSP,
-              It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+              TaskStoredProcedures.LogTaskStatusesSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, BulkTaskUpdateResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
             Times.Once);
     }
 }

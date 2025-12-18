@@ -82,7 +82,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var repo = new RoleRepo(_factory, _sql);
                 await repo.CreateRoleAsync(param);
 
-                var inserted = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = param.RoleName });
+                var inserted = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = param.RoleName });
                 Assert.AreEqual(MockData.RoleName, inserted.Name);
             }
             finally { 
@@ -108,7 +108,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
             {
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateRoleAsync(param));                
+                var ex = await Assert.ThrowsExceptionAsync<ApplicationException>(() => repo.CreateRoleAsync(param));                
             }
             catch(Exception e)
             {

@@ -18,7 +18,7 @@
         /// <summary>
         /// The get task
         /// </summary>
-        public static string GetTask = "SELECT TOP 1 * FROM caseFlow.Task Order BY Id DESC";
+        public static string GetTask = "SELECT ts.TaskId, t.[Title], t.[Description], s.[Title] Status, t.DueDateTime FROM caseFlow.Task t INNER JOIN caseFlow.TaskStatus ts ON ts.TaskId = t.Id INNER JOIN caseFlow.Status s ON s.Id = ts.StatusId Order BY ts.TaskId DESC";
 
         /// <summary>
         /// The delete task status
@@ -59,5 +59,10 @@
         /// The get task status
         /// </summary>
         public static string GetTaskStatus = "SELECT TOP 1 * FROM caseFlow.TaskStatus WHERE TaskId = @taskId ORDER BY Id DESC";
+
+        /// <summary>
+        /// The get task ids
+        /// </summary>
+        public static string GetTaskIds = "SELECT Id TaskId FROM caseFlow.Task";
     }
 }

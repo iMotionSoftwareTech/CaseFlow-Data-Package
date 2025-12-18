@@ -1,4 +1,5 @@
 ﻿using CaseFlowDataPackage.Test.Helpers;
+using Dapper;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
@@ -74,23 +75,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         {
             // Arrange
             var createUserParam = MockData.GetCreateUserParameters(1).First();
+            var expectedResult = MockData.GetNewUserResult();
             _sql
-              .Setup(s => s.ExecuteAsync(
+              .Setup(s => s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  UserStoredProcedures.CreateUserSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-              .ReturnsAsync(-1);
+                  UserStoredProcedures.CreateUserSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewUserResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              .ReturnsAsync(expectedResult);
 
             // Act
             var result = await _repo.CreateUserAsync(createUserParam);
 
             //Assert
-            Assert.AreEqual(-1, result);
+            Assert.AreEqual(expectedResult, result);
             _sql.Verify(s =>
-                s.ExecuteAsync(
+                s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  UserStoredProcedures.CreateUserSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                  UserStoredProcedures.CreateUserSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewUserResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
         }
 
@@ -103,10 +105,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
             // Arrange
             var createUserParam = MockData.GetCreateUserParameters(1).ElementAt(1);
             _sql
-              .Setup(s => s.ExecuteAsync(
-                   _conn.Object,
-                  UserStoredProcedures.CreateUserSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              .Setup(s => s.ExecuteWithOutputAsync(
+                  _conn.Object,
+                  UserStoredProcedures.CreateUserSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewUserResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
               .ThrowsAsync(new Exception(MockData.TaskException));
 
             // Act
@@ -116,10 +118,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
             Assert.AreEqual(MockData.TaskException, ex.Message);
 
             _sql.Verify(s =>
-                s.ExecuteAsync(
-                    _conn.Object,
-                  UserStoredProcedures.CreateUserSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                s.ExecuteWithOutputAsync(
+                  _conn.Object,
+                  UserStoredProcedures.CreateUserSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, NewUserResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
         }
 
@@ -129,7 +131,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         public async Task GetUser_ReturnsUser_Test()
         {
             // Arrange
-            _sql.Setup(s => s.QuerySingleAsync<UserDetailDto>(_conn.Object,
+            _sql.Setup(s => s.QuerySingleAsync<UserDetailResult>(_conn.Object,
                   UserStoredProcedures.GetUserSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>())).ReturnsAsync(MockData.GetUsersDetail());
 
@@ -138,7 +140,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
 
             // Assert
             Assert.IsNotNull(result);
-            _sql.Verify(s => s.QuerySingleAsync<UserDetailDto>(_conn.Object,
+            _sql.Verify(s => s.QuerySingleAsync<UserDetailResult>(_conn.Object,
                   UserStoredProcedures.GetUserSP,
                   It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()), Times.Once);
         }
@@ -150,23 +152,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         public async Task UpdatePasswordAttempt_ReturnsSuccessCount_Test()
         {
             // Arrange
+            var expectedResult = MockData.GetPasswordAttemptResult();
             _sql
-              .Setup(s => s.ExecuteAsync(
+              .Setup(s => s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  UserStoredProcedures.UpdatePasswordAttemptSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
-              .ReturnsAsync(-1);
+                  UserStoredProcedures.UpdatePasswordAttemptSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, PasswordAttemptResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()))
+              .ReturnsAsync(expectedResult);
 
             // Act
-            var result = await _repo.UpdatePasswordAttemptAsync(1);
+            var result = await _repo.UpdatePasswordAttemptAsync(1, 3);
 
             //Assert
-            Assert.AreEqual(-1, result);
+            Assert.AreEqual(expectedResult, result);
             _sql.Verify(s =>
-                s.ExecuteAsync(
+                s.ExecuteWithOutputAsync(
                   _conn.Object,
-                  UserStoredProcedures.UpdatePasswordAttemptSP,
-                  It.IsAny<object?>(), It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
+                  UserStoredProcedures.UpdatePasswordAttemptSP, It.IsAny<DynamicParameters>(), It.IsAny<Func<DynamicParameters, PasswordAttemptResult>>(),
+                  It.IsAny<IDbTransaction?>(), It.IsAny<int?>(), It.IsAny<CommandType?>()),
                 Times.Once);
         }
     }

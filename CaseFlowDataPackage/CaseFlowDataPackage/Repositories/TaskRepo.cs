@@ -2,6 +2,7 @@
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
+using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ResultBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
 using System.Data;
@@ -36,15 +37,16 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="createTaskParameter">The create task parameter.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> CreateTaskAsync(CreateTaskParameter createTaskParameter)
+        public async Task<NewTaskResult> CreateTaskAsync(CreateTaskParameter createTaskParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = createTaskParameter.CreateTaskDynamicParameters();
-            return await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.CreateTaskSP, parameters);
+            return await _sqlRunner.ExecuteWithOutputAsync(conn, TaskStoredProcedures.CreateTaskSP, parameters, 
+                output => output.ToNewTaskResult(), ct: CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -53,12 +55,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<IEnumerable<StatusDto>> GetAllStatusesAsync()
+        public async Task<IEnumerable<StatusResult>> GetAllStatusesAsync()
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            return await _sqlRunner.QueryAsync<StatusDto>(conn, TaskStoredProcedures.GetAllStatusesSP, CommandType.StoredProcedure);
+            return await _sqlRunner.QueryAsync<StatusResult>(conn, TaskStoredProcedures.GetAllStatusesSP, CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(int pageNumber, int pageSize)
+        public async Task<(int totalNoOfRecords, IEnumerable<TaskResult> tasks)> GetAllTasksAsync(int pageNumber, int pageSize)
         {
             using var conn = _connFactory.Create();
             conn.Open();
@@ -77,7 +79,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
             var parameters = pageNumber.GetAllTasksDynamicParameters(pageSize);
             await using var multiResults = await _sqlRunner.QueryMultipleAsync(conn, TaskStoredProcedures.GetAllTasksSP, parameters);
             var totalNoOfRecords = await multiResults.ReadSingleAsync<int>();
-            var tasks = await multiResults.ReadAsync<TaskDto>();
+            var tasks = await multiResults.ReadAsync<TaskResult>();
 
             return (totalNoOfRecords, tasks);
         }
@@ -87,13 +89,13 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="taskId">The task identifier.</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TaskStatusDto>> GetTaskWithStatusesByIdAsync(int taskId)
+        public async Task<IEnumerable<TaskStatusResult>> GetTaskWithStatusesByIdAsync(int taskId)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = taskId.GetAllTaskWithStatusesByIdParameters();
-            var result = await _sqlRunner.QueryAsync<TaskStatusDto>(conn, TaskStoredProcedures.GetTaskWithStatusesByIdSP, parameters);
+            var result = await _sqlRunner.QueryAsync<TaskStatusResult>(conn, TaskStoredProcedures.GetTaskWithStatusesByIdSP, parameters);
             return result;
         }
 
@@ -102,15 +104,16 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="logTaskStatusParameter">The log task status parameter.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter)
+        public async Task<TaskUpdateResult> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = logTaskStatusParameter.GetLogTaskStatusParameters();
-            return await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.LogTaskStatusSP, parameters);
+             return await _sqlRunner.ExecuteWithOutputAsync(conn, TaskStoredProcedures.LogTaskStatusSP, parameters,
+                output => output.ToLogTaskStatusResult(), ct: CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -118,20 +121,19 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="logTaskStatusParameters">The log task status parameters.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters)
+        public async Task<BulkTaskUpdateResult> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var tvp = logTaskStatusParameters.ToTaskUpdateDataTable().AsTableValuedParameter("caseFlow.TaskUpdateList");
-            var parameters = new DynamicParameters();
-            parameters.Add("taskToUpdate", tvp);
-            parameters.Add("caseworkerId", logTaskStatusParameters.First().CaseworkerId);
+            var parameters = tvp.ToLogTaskStatusParameters(logTaskStatusParameters.First().CaseworkerId);
 
-            var result = await _sqlRunner.ExecuteAsync(conn, TaskStoredProcedures.LogTaskStatusesSP, parameters);
-            return result;
+            return await _sqlRunner.ExecuteWithOutputAsync(conn, TaskStoredProcedures.LogTaskStatusesSP, parameters,
+                output => output.ToBulkTaskUpdateResult(), ct: CommandType.StoredProcedure);
+           
         }
     }
 }

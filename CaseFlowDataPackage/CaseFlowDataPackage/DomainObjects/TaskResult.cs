@@ -3,7 +3,7 @@
     /// <summary>
     /// The TaskDto
     /// </summary>
-    public class TaskDto
+    public class TaskResult
     {
         /// <summary>
         /// Gets or sets the task identifier.
