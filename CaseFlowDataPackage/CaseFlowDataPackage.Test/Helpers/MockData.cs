@@ -315,23 +315,23 @@ namespace CaseFlowDataPackage.Test.Helpers
         /// Gets the caseworker roles.
         /// </summary>
         /// <returns>The <see cref="IEnumerable{T}"/></returns>
-        public static IEnumerable<CaseworkerRoleDto> GetCaseworkerRoles()
+        public static IEnumerable<CaseworkerRoleResult> GetCaseworkerRoles()
         {
-            return new List<CaseworkerRoleDto>
+            return new List<CaseworkerRoleResult>
             {
-                new CaseworkerRoleDto
+                new CaseworkerRoleResult
                 {
                     Id = 1,
                     Name = "Case Auditor",
                     Description = string.Empty
                 },
-                new CaseworkerRoleDto
+                new CaseworkerRoleResult
                 {
                     Id = 2,
                     Name = "Legal Officer",
                     Description = "The officer running the case"
                 },
-                new CaseworkerRoleDto
+                new CaseworkerRoleResult
                 {
                     Id = 3,
                     Name = "Case Manager",
@@ -344,86 +344,86 @@ namespace CaseFlowDataPackage.Test.Helpers
         /// Gets the statuses.
         /// </summary>
         /// <returns>The <see cref="IEnumerable{T}"/></returns>
-        public static IEnumerable<StatusDto> GetStatuses()
+        public static IEnumerable<StatusResult> GetStatuses()
         {
-            return new List<StatusDto>()
+            return new List<StatusResult>()
             {
-                new StatusDto
+                new StatusResult
                 {
                     Id = 1,
                     Title = "Case Created"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 2,
                     Title = "Under Review"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 3,
                     Title = "Hearing Scheduled"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 4,
                     Title = "Hearing Held"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 5,
                     Title = "Awaiting Judgement"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 6,
                     Title = "Order Made"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 7,
                     Title = "Case Stayed"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 8,
                     Title = "Case Discontinued"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 9,
                     Title = "Concluded"
                 },
-                new StatusDto
+                new StatusResult
                 {
                     Id = 10,
                     Title = "Transferred"
                 },
-            };            
+            };
         }
 
         /// <summary>
         /// Gets the tasks.
         /// </summary>
         /// <returns>The <see cref="IEnumerable{T}"/></returns>
-        public static IEnumerable<TaskDto> GetTasks()
+        public static IEnumerable<TaskResult> GetTasks()
         {
-            return new List<TaskDto>
+            return new List<TaskResult>
             {
-                new TaskDto
+                new TaskResult
                 {
                     TaskId = 1,
                     Title = "Assault and Battery",
                     Description = "Assult and battery case",
                     DueDateTime = DateTime.Now.AddYears(1)
                 },
-                new TaskDto
+                new TaskResult
                 {
                     TaskId = 2,
                     Title = "Theft",
                     Description = "Theft at supermarket case",
                     DueDateTime = DateTime.Now.AddYears(1)
                 },
-                new TaskDto
+                new TaskResult
                 {
                     TaskId = 3,
                     Title = "Kidnapping",
@@ -437,11 +437,11 @@ namespace CaseFlowDataPackage.Test.Helpers
         /// Gets the task statuses.
         /// </summary>
         /// <returns>The <see cref="IEnumerable{T}"/></returns>
-        public static IEnumerable<TaskStatusDto> GetTaskStatuses()
+        public static IEnumerable<TaskStatusResult> GetTaskStatuses()
         {
-            return new List<TaskStatusDto>
+            return new List<TaskStatusResult>
             {
-                new TaskStatusDto
+                new TaskStatusResult
                 {
                     Id = 1,
                     TaskId = 1,
@@ -451,7 +451,7 @@ namespace CaseFlowDataPackage.Test.Helpers
                     LogDateTime = DateTime.Now,
                     Notes = "Case registered for assualt and battery"
                 },
-                new TaskStatusDto
+                new TaskStatusResult
                 {
                     Id = 2,
                     TaskId = 1,
@@ -461,7 +461,7 @@ namespace CaseFlowDataPackage.Test.Helpers
                     LogDateTime = DateTime.Now.AddDays(2),
                     Notes = "Case is currently under review"
                 },
-                new TaskStatusDto
+                new TaskStatusResult
                 {
                     Id = 3,
                     TaskId = 1,
@@ -477,10 +477,10 @@ namespace CaseFlowDataPackage.Test.Helpers
         /// <summary>
         /// Gets the users detail.
         /// </summary>
-        /// <returns>THe <see cref="UserDetailDto"/></returns>
-        public static UserDetailDto GetUsersDetail()
+        /// <returns>THe <see cref="UserDetailResult"/></returns>
+        public static UserDetailResult GetUsersDetail()
         {
-            return new UserDetailDto
+            return new UserDetailResult
             {
                 CaseworkerId = 1,
                 CaseworkerRoleId = 25,
@@ -540,5 +540,90 @@ namespace CaseFlowDataPackage.Test.Helpers
                 }
             };
         }
-    }                  
+
+        /// <summary>
+        /// Gets the new role results.
+        /// </summary>
+        /// <returns>The <see cref="NewRoleResult"/></returns>
+        public static NewRoleResult GetNewRoleResult()
+        {
+            return new NewRoleResult
+            {
+                Success = true,
+                RoleId = 1,
+                ErrorMessage = string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Gets the new task result.
+        /// </summary>
+        /// <returns>The <see cref="NewTaskResult"/></returns>
+        public static NewTaskResult GetNewTaskResult()
+        {
+            return new NewTaskResult
+            {
+                Success = true,
+                TaskId = 1,
+                ErrorMessage = string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Gets the task update result.
+        /// </summary>
+        /// <returns>The <see cref="TaskUpdateResult"/></returns>
+        public static TaskUpdateResult GetTaskUpdateResult()
+        {
+            return new TaskUpdateResult
+            {
+                Success = true,
+                TaskStatusId = 1,
+                ErrorMessage = string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Gets the bulk task update result.
+        /// </summary>
+        /// <returns>The <see cref="BulkTaskUpdateResult"/></returns>
+        public static BulkTaskUpdateResult GetBulkTaskUpdateResult()
+        {
+            return new BulkTaskUpdateResult
+            {
+                Success = true,
+                InsertedCount = 2,
+                ErrorMessage = string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Gets the new user result.
+        /// </summary>
+        /// <returns>The <see cref="NewUserResult"/></returns>
+        public static NewUserResult GetNewUserResult()
+        {
+            return new NewUserResult
+            {
+                Success = true,
+                CaseworkerId = 1,
+                ErrorMessage = string.Empty
+            };
+        }
+
+        /// <summary>
+        /// Gets the password attempt result.
+        /// </summary>
+        /// <returns>The <see cref="PasswordAttemptResult"/></returns>
+        public static PasswordAttemptResult GetPasswordAttemptResult()
+        {
+            return new PasswordAttemptResult
+            {
+                Success = true,
+                NewAttemptCount = 1,
+                WasLocked = false,
+                ErrorMessage = string.Empty
+            };
+        }
+    }
 }

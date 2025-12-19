@@ -80,12 +80,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(7);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var repo = new UserRepo(_factory, _sql);
                 await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).First());
 
-                var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUser);
+                var inserted = await conn.QuerySingleAsync<UserResult>(TestQueries.GetUser);
                 Assert.AreEqual(MockData.Username, inserted.UserName);
 
             }
@@ -112,7 +112,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(8);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var param = MockData.GetCreateUserParameters(role.Id).ElementAt(1);
                 var repo = new UserRepo(_factory, _sql);
@@ -122,7 +122,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateUserAsync(param));
+                var ex = await Assert.ThrowsExceptionAsync<ApplicationException>(() => repo.CreateUserAsync(param));
             }
             catch (Exception e)
             {
@@ -151,7 +151,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(9);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var repo = new UserRepo(_factory, _sql);
                 await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).First());
@@ -183,15 +183,15 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(10);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var repo = new UserRepo(_factory, _sql);
                 await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
 
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
-                await repo.UpdatePasswordAttemptAsync(caseworker.Id);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
+                await repo.UpdatePasswordAttemptAsync(caseworker.Id, 3);
 
-                var inserted = await conn.QuerySingleAsync<UserDto>(TestQueries.GetUserUpdatedPasswordAttempt);
+                var inserted = await conn.QuerySingleAsync<UserResult>(TestQueries.GetUserUpdatedPasswordAttempt);
                 Assert.AreEqual(1, inserted.PasswordAttempt);
             }
             finally

@@ -3,7 +3,7 @@
     /// <summary>
     /// The TaskStatus
     /// </summary>
-    public class TaskStatusDto
+    public class TaskStatusResult
     {
         /// <summary>
         /// Gets or sets the identifier.

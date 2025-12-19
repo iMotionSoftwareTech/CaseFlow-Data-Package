@@ -1,9 +1,9 @@
 ﻿namespace IMotionSoftware.CaseFlowDataPackage.DomainObjects
 {
     /// <summary>
-    /// The CaseworkerRoleDto
+    /// The StatusDto
     /// </summary>
-    public class CaseworkerRoleDto
+    public class StatusResult
     {
         /// <summary>
         /// Gets or sets the identifier.
@@ -14,19 +14,11 @@
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the name.
+        /// Gets or sets the title.
         /// </summary>
         /// <value>
-        /// The name.
+        /// The title.
         /// </value>
-        public required string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the description.
-        /// </summary>
-        /// <value>
-        /// The description.
-        /// </value>
-        public string? Description { get; set; }
+        public required string Title { get; set; }
     }
 }

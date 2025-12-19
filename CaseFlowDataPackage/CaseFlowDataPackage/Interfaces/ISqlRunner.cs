@@ -13,6 +13,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
     /// </summary>
     public interface ISqlRunner
     {
+
+        /// <summary>
+        /// Executes the with output asynchronous.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">The connection.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="tx">The tx.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="ct">The ct.</param>
+        /// <returns>
+        /// The <see cref="Task{TResult}" />
+        /// </returns>
+        Task<T> ExecuteWithOutputAsync<T>(IDbConnection connection, string sql, DynamicParameters param,
+                                  Func<DynamicParameters, T> map, IDbTransaction? tx = null, int? timeout = null, CommandType? ct = null);
+
         /// <summary>
         /// Executes the asynchronous.
         /// </summary>
