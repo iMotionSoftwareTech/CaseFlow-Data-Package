@@ -1,17 +1,17 @@
 ﻿namespace IMotionSoftware.CaseFlowDataPackage.DomainObjects
 {
     /// <summary>
-    /// The UserDto
+    /// The UserDetailDto
     /// </summary>
-    public class UserDto
+    public class UserDetailResult
     {
         /// <summary>
-        /// Gets or sets the identifier.
+        /// Gets or sets the caseworker identifier.
         /// </summary>
         /// <value>
-        /// The identifier.
+        /// The caseworker identifier.
         /// </value>
-        public int Id { get; set; }
+        public int CaseworkerId { get; set; }
 
         /// <summary>
         /// Gets or sets the caseworker role identifier.
@@ -22,44 +22,44 @@
         public int CaseworkerRoleId { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the user.
+        /// Gets or sets the role.
         /// </summary>
         /// <value>
-        /// The name of the user.
+        /// The role.
         /// </value>
-        public required string UserName { get; set; }
+        public required string Role { get; set; }
 
         /// <summary>
-        /// Gets or sets the password hash.
+        /// Gets or sets the email.
         /// </summary>
         /// <value>
-        /// The password hash.
+        /// The email.
         /// </value>
-        public byte[] PasswordHash { get; set; }
+        public required string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets the password salt.
+        /// Gets or sets the username.
         /// </summary>
         /// <value>
-        /// The password salt.
+        /// The username.
         /// </value>
-        public byte[] PasswordSalt { get; set; }
+        public required string Username { get; set; }
 
         /// <summary>
-        /// Gets or sets the created at.
+        /// Gets or sets the forename.
         /// </summary>
         /// <value>
-        /// The created at.
+        /// The forename.
         /// </value>
-        public DateTime CreatedAt { get; set; }
+        public required string Forename { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is locked.
+        /// Gets or sets the surname.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if this instance is locked; otherwise, <c>false</c>.
+        /// The surname.
         /// </value>
-        public bool IsLocked { get; set; }
+        public required string Surname { get; set; }
 
         /// <summary>
         /// Gets or sets the password attempt.
@@ -68,5 +68,13 @@
         /// The password attempt.
         /// </value>
         public int PasswordAttempt { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is locked.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is locked; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsLocked { get; set; }
     }
 }

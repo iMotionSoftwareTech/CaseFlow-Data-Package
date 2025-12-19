@@ -12,21 +12,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// Creates the user asynchronous.
         /// </summary>
         /// <param name="createUserParameter">The create user parameter.</param>
-        /// <returns>The <see cref="Task{int}"/></returns>
-        Task<int> CreateUserAsync(CreateUserParameter createUserParameter);
+        /// <returns>The <see cref="Task{T}"/></returns>
+        Task<NewUserResult> CreateUserAsync(CreateUserParameter createUserParameter);
 
         /// <summary>
         /// Gets the user asynchronous.
         /// </summary>
         /// <param name="email">The email.</param>
         /// <returns>The <see cref="Task{T}"/></returns>
-        Task<UserDetailDto> GetUserAsync(string email);
+        Task<UserDetailResult> GetUserAsync(string email);
 
         /// <summary>
         /// Updates the password attempt asynchronous.
         /// </summary>
         /// <param name="caseworkerId">The caseworker identifier.</param>
-        /// <returns>The <see cref="Task{int}"/></returns>
-        Task<int> UpdatePasswordAttemptAsync(int caseworkerId);
+        /// <param name="maxAttempts">The maximum attempts.</param>
+        /// <returns>
+        /// The <see cref="Task{T}" />
+        /// </returns>
+        Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(int caseworkerId, int maxAttempts);
     }
 }

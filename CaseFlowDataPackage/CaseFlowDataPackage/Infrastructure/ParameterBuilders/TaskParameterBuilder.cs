@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using System.Data;
+using static Dapper.SqlMapper;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
 {
@@ -21,7 +22,9 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
             parameters.Add("title", createTaskParameter.Title, DbType.String, ParameterDirection.Input);
             parameters.Add("description", createTaskParameter.Description, DbType.String, ParameterDirection.Input);
             parameters.Add("dueDateTime", createTaskParameter.DueDateTime, DbType.DateTime2, ParameterDirection.Input);
-
+            parameters.Add("success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("taskId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("errorMessage", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;
         }
 
@@ -67,6 +70,9 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
             parameters.Add("caseworkerId", logTaskStatusParameter.CaseworkerId, DbType.Int32, ParameterDirection.Input);
             parameters.Add("notes", logTaskStatusParameter.Notes, DbType.String, ParameterDirection.Input);
             parameters.Add("logDateTime", logTaskStatusParameter.LogDateTime, DbType.DateTime2, ParameterDirection.Input);
+            parameters.Add("success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("taskStatusId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("errorMessage", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
 
             return parameters;
         }
@@ -88,6 +94,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
                 dt.Rows.Add(r.TaskId, r.StatusId, r.Notes, r.LogDateTime);
 
             return dt;
+        }
+
+        /// <summary>
+        /// Logs the task status parameters.
+        /// </summary>
+        /// <param name="tvp">The TVP.</param>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="DynamicParameters"/></returns>
+        public static DynamicParameters ToLogTaskStatusParameters(this ICustomQueryParameter tvp, int caseworkerId) 
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("taskToUpdate", tvp);
+            parameters.Add("caseworkerId", caseworkerId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("insertedCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("errorMessage", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
+
+            return parameters;
         }
     }
 }

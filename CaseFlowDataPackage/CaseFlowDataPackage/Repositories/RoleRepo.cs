@@ -1,8 +1,10 @@
 ﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
+using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ResultBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
+using System.Data;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 {
@@ -38,27 +40,28 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="createRoleParameter">The create role parameter.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> CreateRoleAsync(CreateRoleParameter createRoleParameter)
+        public async Task<NewRoleResult> CreateRoleAsync(CreateRoleParameter createRoleParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = createRoleParameter.CreateRoleDynamicParameters();
-            return await _sqlRunner.ExecuteAsync(conn, RoleStoredProcedures.CreateRoleSP, parameters);
+            return await _sqlRunner.ExecuteWithOutputAsync(conn, RoleStoredProcedures.CreateRoleSP, parameters,
+                output => output.ToNewRoleResult(), ct: CommandType.StoredProcedure);
         }
 
         /// <summary>
         /// Gets all roles.
         /// </summary>
         /// <returns>The <see cref="Task{T}"/></returns>
-        public async Task<IEnumerable<CaseworkerRoleDto>> GetAllRolesAsync() 
+        public async Task<IEnumerable<CaseworkerRoleResult>> GetAllRolesAsync() 
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            return await _sqlRunner.QueryAsync<CaseworkerRoleDto>(conn, RoleStoredProcedures.GetAllRolesSP);
+            return await _sqlRunner.QueryAsync<CaseworkerRoleResult>(conn, RoleStoredProcedures.GetAllRolesSP);
         }
     }
 }

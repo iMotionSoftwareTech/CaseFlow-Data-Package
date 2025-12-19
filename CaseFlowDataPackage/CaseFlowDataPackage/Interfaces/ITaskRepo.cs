@@ -12,14 +12,14 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// Creates the task asynchronous.
         /// </summary>
         /// <param name="createTaskParameter">The create task parameter.</param>
-        /// <returns>The <see cref="Task{int}"/></returns>
-        Task<int> CreateTaskAsync(CreateTaskParameter createTaskParameter);
+        /// <returns>The <see cref="Task{T}"/></returns>
+        Task<NewTaskResult> CreateTaskAsync(CreateTaskParameter createTaskParameter);
 
         /// <summary>
         /// Gets all statuses asynchronous.
         /// </summary>
         /// <returns>The <see cref="Task{T}"/></returns>
-        Task<IEnumerable<StatusDto>> GetAllStatusesAsync();
+        Task<IEnumerable<StatusResult>> GetAllStatusesAsync();
 
         /// <summary>
         /// Gets all tasks asynchronous.
@@ -29,27 +29,27 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        Task<(int totalNoOfRecords, IEnumerable<TaskDto> tasks)> GetAllTasksAsync(int pageNumber, int pageSize);
+        Task<(int totalNoOfRecords, IEnumerable<TaskResult> tasks)> GetAllTasksAsync(int pageNumber, int pageSize);
 
         /// <summary>
         /// Gets the task with statuses by identifier.
         /// </summary>
         /// <param name="taskId">The task identifier.</param>
         /// <returns>The <see cref="Task{T}"/></returns>
-        Task<IEnumerable<TaskStatusDto>> GetTaskWithStatusesByIdAsync(int taskId);
+        Task<IEnumerable<TaskStatusResult>> GetTaskWithStatusesByIdAsync(int taskId);
 
         /// <summary>
         /// Logs the task status asynchronous.
         /// </summary>
         /// <param name="logTaskStatusParameter">The log task status parameter.</param>
-        /// <returns>The <see cref="Task{int}"/></returns>
-        Task<int> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter);
+        /// <returns>The <see cref="Task{T}"/></returns>
+        Task<TaskUpdateResult> LogTaskStatusAsync(LogTaskStatusParameter logTaskStatusParameter);
 
         /// <summary>
         /// Logs the task statuses asynchronous.
         /// </summary>
         /// <param name="logTaskStatusParameters">The log task status parameters.</param>
-        /// <returns>The <see cref="Task{int}"/></returns>
-        Task<int> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters);
+        /// <returns>The <see cref="Task{T}"/></returns>
+        Task<BulkTaskUpdateResult> LogTaskStatusesAsync(IEnumerable<LogTaskStatusParameter> logTaskStatusParameters);
     }
 }

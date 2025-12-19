@@ -1,8 +1,10 @@
 ﻿using IMotionSoftware.CaseFlowDataPackage.DomainObjects;
 using IMotionSoftware.CaseFlowDataPackage.DomainObjects.ParameterObjects;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders;
+using IMotionSoftware.CaseFlowDataPackage.Infrastructure.ResultBuilders;
 using IMotionSoftware.CaseFlowDataPackage.Infrastructure.StoredProcedures;
 using IMotionSoftware.CaseFlowDataPackage.Interfaces;
+using System.Data;
 
 namespace IMotionSoftware.CaseFlowDataPackage.Repositories
 {
@@ -29,15 +31,16 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// </summary>
         /// <param name="createUserParameter">The create user parameter.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> CreateUserAsync(CreateUserParameter createUserParameter)
+        public async Task<NewUserResult> CreateUserAsync(CreateUserParameter createUserParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = createUserParameter.CreateUserDynamicParameters();
-            return await _sqlRunner.ExecuteAsync(conn, UserStoredProcedures.CreateUserSP, parameters);
+            return await _sqlRunner.ExecuteWithOutputAsync(conn, UserStoredProcedures.CreateUserSP, parameters,
+                output => output.ToNewUserResult(), ct: CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -47,29 +50,31 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<UserDetailDto> GetUserAsync(string email)
+        public async Task<UserDetailResult> GetUserAsync(string email)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
             var parameters = email.GetUserDynamicParameters();
-            return await _sqlRunner.QuerySingleAsync<UserDetailDto>(conn, UserStoredProcedures.GetUserSP, parameters);
+            return await _sqlRunner.QuerySingleAsync<UserDetailResult>(conn, UserStoredProcedures.GetUserSP, parameters);
         }
 
         /// <summary>
         /// Updates the password attempt asynchronous.
         /// </summary>
         /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <param name="maxAttempts">The maximum attempts.</param>
         /// <returns>
-        /// The <see cref="Task{int}" />
+        /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<int> UpdatePasswordAttemptAsync(int caseworkerId)
+        public async Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(int caseworkerId, int maxAttempts)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            var parameters = caseworkerId.UpdatePasswordDynamicParameters();
-            return await _sqlRunner.ExecuteAsync(conn, UserStoredProcedures.UpdatePasswordAttemptSP, parameters);
+            var parameters = caseworkerId.UpdatePasswordDynamicParameters(maxAttempts);
+            return await _sqlRunner.ExecuteWithOutputAsync(conn, UserStoredProcedures.UpdatePasswordAttemptSP, parameters,
+                output => output.ToPasswordAttemptResult(), ct: CommandType.StoredProcedure);
         }
     }
 }

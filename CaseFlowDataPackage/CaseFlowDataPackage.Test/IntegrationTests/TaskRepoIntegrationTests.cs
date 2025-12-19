@@ -85,15 +85,15 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(3);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(4));
 
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).First());
 
-                var inserted = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                var inserted = await conn.QuerySingleAsync<TaskResult>(TestQueries.GetTask);
                 Assert.AreEqual(MockData.TaskTitle, inserted.Title);
             }
             finally
@@ -123,11 +123,11 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(4);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
 
                 var param = MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(1);
                 var repo = new TaskRepo(_factory, _sql);
@@ -137,7 +137,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
 
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.CreateTaskAsync(param));
+                var ex = await Assert.ThrowsExceptionAsync<ApplicationException>(() => repo.CreateTaskAsync(param));
             }
             catch (Exception e)
             {
@@ -186,12 +186,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(5);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(3));
 
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(2));
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(3));
 
@@ -230,18 +230,18 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(6);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(1));
 
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
                 //var taskParams = MockData.GetCreateTaskParameters(caseworker.Id);
 
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(4));
 
                 // Execute call to Get Tasks with Statuses SP
-                var inserted = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                var inserted = await conn.QuerySingleAsync<TaskResult>(TestQueries.GetTask);
                 var result = await repo.GetTaskWithStatusesByIdAsync(inserted.TaskId);
 
                 Assert.IsNotNull(result);
@@ -274,17 +274,17 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(11);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(4));
 
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(5));
-                var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                var task = await conn.QuerySingleAsync<TaskResult>(TestQueries.GetTask);
 
                 await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id));
-                var inserted = await conn.QuerySingleAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task.TaskId });
+                var inserted = await conn.QuerySingleAsync<TaskStatusResult>(TestQueries.GetTaskStatus, new { taskId = task.TaskId });
 
                 Assert.AreEqual(2, inserted.StatusId);
             }
@@ -315,25 +315,25 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(12);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
 
                 var param = MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(6);
                 var repo = new TaskRepo(_factory, _sql);
 
                 // Create Task
                 await repo.CreateTaskAsync(param);
-                var task = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
+                var task = await conn.QuerySingleAsync<TaskResult>(TestQueries.GetTask);
 
                 // Seed first insert
                 await repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id));                
 
                 // Act again with same name
                 // If your repo throws, assert throws; if it returns a code, assert that.
-                var ex = await Assert.ThrowsExceptionAsync<SqlException>(() => repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id)));
+                var ex = await Assert.ThrowsExceptionAsync<ApplicationException>(() => repo.LogTaskStatusAsync(MockData.GetLogTaskStatusParameter(task.TaskId, caseworker.Id)));
             }
             catch (Exception e)
             {
@@ -367,27 +367,24 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 var roleRepo = new RoleRepo(_factory, _sql);
                 var roleParam = MockData.GetCreateRoleParameters().ElementAt(12);
                 await roleRepo.CreateRoleAsync(roleParam);
-                var role = await conn.QuerySingleAsync<CaseworkerRoleDto>(TestQueries.GetRole, new { name = roleParam.RoleName });
+                var role = await conn.QuerySingleAsync<CaseworkerRoleResult>(TestQueries.GetRole, new { name = roleParam.RoleName });
 
                 // Create user
                 var userRepo = new UserRepo(_factory, _sql);
                 await userRepo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(4));
 
                 // Create multiple tasks
-                var caseworker = await conn.QuerySingleAsync<UserDto>(TestQueries.GetCaseworker);
+                var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
+                await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(5));
                 await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(6));
-                var task1 = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
-                await repo.CreateTaskAsync(MockData.GetCreateTaskParameters(caseworker.Id).ElementAt(7));
-                var task2 = await conn.QuerySingleAsync<TaskDto>(TestQueries.GetTask);
-                var taskIds = new List<int>();
-                taskIds.Add(task1.TaskId);
-                taskIds.Add(task2.TaskId);
+                var tasks = await conn.QueryAsync<int>(TestQueries.GetTaskIds);
 
                 // Update task status for each task
-                await repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(taskIds, caseworker.Id));
-                var insertedTaskStatus1 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task1.TaskId });
-                var insertedTaskStatus2 = await conn.QueryAsync<TaskStatusDto>(TestQueries.GetTaskStatus, new { taskId = task2.TaskId });
+                await repo.LogTaskStatusesAsync(MockData.GetLogTaskStatusParameters(tasks, caseworker.Id));
+                var insertedTaskStatus1 = await conn.QueryAsync<TaskStatusResult>(TestQueries.GetTaskStatus, new { taskId = tasks.First() });
+                var insertedTaskStatus2 = await conn.QueryAsync<TaskStatusResult>(TestQueries.GetTaskStatus, new { taskId = tasks.ElementAt(1) });
 
+                //Assert.IsTrue(insertedTaskStatus1.Count() > 1);
                 Assert.AreEqual(2, insertedTaskStatus1.First().StatusId);
                 Assert.AreEqual(2, insertedTaskStatus2.First().StatusId);
             }
