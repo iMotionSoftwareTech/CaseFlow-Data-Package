@@ -189,7 +189,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.IntegrationTests
                 await repo.CreateUserAsync(MockData.GetCreateUserParameters(role.Id).ElementAt(2));
 
                 var caseworker = await conn.QuerySingleAsync<UserResult>(TestQueries.GetCaseworker);
-                await repo.UpdatePasswordAttemptAsync(caseworker.Id, 3);
+                await repo.UpdatePasswordAttemptAsync(MockData.GetPasswordAttemptParameters(caseworker.Id));
 
                 var inserted = await conn.QuerySingleAsync<UserResult>(TestQueries.GetUserUpdatedPasswordAttempt);
                 Assert.AreEqual(1, inserted.PasswordAttempt);
