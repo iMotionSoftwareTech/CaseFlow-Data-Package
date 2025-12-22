@@ -51,11 +51,11 @@ namespace IMotionSoftware.CaseFlowDataPackage.Infrastructure.ParameterBuilders
         /// <returns>
         /// The <see cref="DynamicParameters" />
         /// </returns>
-        public static DynamicParameters UpdatePasswordDynamicParameters (this int caseworkerId, int maxAttempts)
+        public static DynamicParameters UpdatePasswordDynamicParameters (this PasswordAttemptParameter passwordAttemptParameter)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("caseworkerId", caseworkerId, DbType.Int32, ParameterDirection.Input);
-            parameters.Add("maxAttempts", maxAttempts, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("caseworkerId", passwordAttemptParameter.CaseworkerId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("maxAttempts", passwordAttemptParameter.MaxAttempts, DbType.Int32, ParameterDirection.Input);
             parameters.Add("newAttemptCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
             parameters.Add("wasLocked", dbType: DbType.Boolean, direction: ParameterDirection.Output);

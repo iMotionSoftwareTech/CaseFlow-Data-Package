@@ -153,6 +153,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
         {
             // Arrange
             var expectedResult = MockData.GetPasswordAttemptResult();
+            var parameter = MockData.GetPasswordAttemptParameters(1);
             _sql
               .Setup(s => s.ExecuteWithOutputAsync(
                   _conn.Object,
@@ -161,7 +162,7 @@ namespace IMotionSoftware.CaseFlowDataPackage.Test.RepoTests
               .ReturnsAsync(expectedResult);
 
             // Act
-            var result = await _repo.UpdatePasswordAttemptAsync(1, 3);
+            var result = await _repo.UpdatePasswordAttemptAsync(parameter);
 
             //Assert
             Assert.AreEqual(expectedResult, result);
