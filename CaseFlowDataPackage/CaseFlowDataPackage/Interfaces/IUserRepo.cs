@@ -25,11 +25,10 @@ namespace IMotionSoftware.CaseFlowDataPackage.Interfaces
         /// <summary>
         /// Updates the password attempt asynchronous.
         /// </summary>
-        /// <param name="caseworkerId">The caseworker identifier.</param>
-        /// <param name="maxAttempts">The maximum attempts.</param>
+        /// <param name="passwordAttemptParameter">The password attempt parameter.</param>
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(int caseworkerId, int maxAttempts);
+        Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(PasswordAttemptParameter passwordAttemptParameter);
     }
 }

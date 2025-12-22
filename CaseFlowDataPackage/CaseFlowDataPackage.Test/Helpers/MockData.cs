@@ -625,5 +625,19 @@ namespace CaseFlowDataPackage.Test.Helpers
                 ErrorMessage = string.Empty
             };
         }
+
+        /// <summary>
+        /// Gets the password attempt parameters.
+        /// </summary>
+        /// <param name="caseworkerId">The caseworker identifier.</param>
+        /// <returns>The <see cref="PasswordAttemptParameter"/></returns>
+        public static PasswordAttemptParameter GetPasswordAttemptParameters(this int caseworkerId)
+        {
+            return new PasswordAttemptParameter
+            {
+                CaseworkerId = caseworkerId,
+                MaxAttempts = 3
+            };
+        }
     }
 }

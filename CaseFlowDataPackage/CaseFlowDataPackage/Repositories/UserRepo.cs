@@ -67,12 +67,12 @@ namespace IMotionSoftware.CaseFlowDataPackage.Repositories
         /// <returns>
         /// The <see cref="Task{T}" />
         /// </returns>
-        public async Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(int caseworkerId, int maxAttempts)
+        public async Task<PasswordAttemptResult> UpdatePasswordAttemptAsync(PasswordAttemptParameter passwordAttemptParameter)
         {
             using var conn = _connFactory.Create();
             conn.Open();
 
-            var parameters = caseworkerId.UpdatePasswordDynamicParameters(maxAttempts);
+            var parameters = passwordAttemptParameter.UpdatePasswordDynamicParameters();
             return await _sqlRunner.ExecuteWithOutputAsync(conn, UserStoredProcedures.UpdatePasswordAttemptSP, parameters,
                 output => output.ToPasswordAttemptResult(), ct: CommandType.StoredProcedure);
         }
